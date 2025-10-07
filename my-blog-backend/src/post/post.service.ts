@@ -13,13 +13,16 @@ export class PostService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 'create' 메서드: 새로운 게시글을 생성하는 기능을 담당합니다.
-  create(createPostDto: CreatePostDto) {
+  create(createPostDto: CreatePostDto, userId: number) {
     // 2. 셰프가 주문서(DTO)를 받고, 식자재 공급팀(prisma)에게 재료를 창고에 넣어달라고 요청합니다.
     // this.prisma.post.create()는 새로운 Post 레코드를 생성하는 Prisma의 메서드입니다.
     // 'data' 필드에 DTO를 그대로 전달하면, Prisma가 DTO의 필드('title', 'content')와
     // Post 모델의 필드를 자동으로 매칭해서 데이터를 삽입해줍니다.
     return this.prisma.post.create({
-      data: createPostDto,
+      data: {
+        ...createPostDto,
+        authorId: userId
+      }
     });
   }
 

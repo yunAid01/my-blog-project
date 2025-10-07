@@ -5,6 +5,10 @@ import { UpdatePostDto } from './dto/update-post.dto';
 // jwt 인증
 import { AuthGuard } from '@nestjs/passport'; // AuthGuard를 import 합니다.
 
+// userDecorator and userClass from prisma
+import { User } from 'src/user/decorator/user.decorater';
+import type { User as UserModel } from '@prisma/client'; // 2. Prisma가 생성한 User 타입을 import
+
 
 @Controller('posts')
 export class PostController {
@@ -17,9 +21,10 @@ export class PostController {
   // createPostDto 파라미터에 자동으로 넣어달라고 NestJS에 요청합니다.
   // 이때 CreatePostDto 타입을 지정해서, 들어온 데이터가 '주문서 양식'에 맞는지 확인합니다.
   @UseGuards(AuthGuard()) // <--- 이 경로에 '가드'를 배치합니다!
-  create(@Body() createPostDto: CreatePostDto) {
+  create(@Body() createPostDto: CreatePostDto, @User() user: UserModel) {
     // 2. 홀 매니저가 손님의 주문서(DTO)를 그대로 주방 셰프에게 전달합니다.
-    return this.postService.create(createPostDto);
+    const userId = user.id
+    return this.postService.create(createPostDto, userId);
   }
 
   @Get() // HTTP GET 요청을 처리하는 '핸들러'입니다.
