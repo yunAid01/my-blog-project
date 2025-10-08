@@ -44,6 +44,14 @@ export class PostController {
     // 데이터베이스의 id는 숫자 타입이므로, '+'를 붙여 문자열 id를 숫자(number)로 변환해줍니다.
     return this.postService.findOne(+id);
   }
+  
+  // 'GET /posts/my' 라는 새로운 경로입니다.
+  // 이 부분이 아마 누락되었을 수 있습니다.
+  @Get('/my')
+  @UseGuards(AuthGuard()) // 당연히 로그인이 필요합니다.
+  findMyPosts(@User() user: UserModel) {
+    return this.postService.findMyPosts(user.id);
+  }
 
   // @Patch(':id') 데코레이터는 HTTP PATCH 요청을 처리하며, 특정 리소스를 수정함을 의미합니다.
   @Patch(':id')

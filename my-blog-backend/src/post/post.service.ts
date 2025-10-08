@@ -48,6 +48,15 @@ export class PostService {
     });
   }
 
+  // 내가 쓴 글만 찾는 메서드입니다.
+  findMyPosts(userId: number) {
+    return this.prisma.post.findMany({
+      where: {
+        authorId: userId,
+      },
+    });
+  }
+
   // 'update' 메서드: id가 일치하는 게시글의 내용을 수정합니다.
   update(id: number, updatePostDto: UpdatePostDto) {
     // 셰프가 '1번 메뉴 수정 요청서'를 받고, 공급팀에게 창고의 재료를 업데이트하라고 지시합니다.
