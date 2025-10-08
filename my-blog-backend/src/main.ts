@@ -24,6 +24,12 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3000);
+  // --- [이 줄을 추가해주세요!] ---
+  // enableCors()를 호출하면, 기본적으로 모든 출처(Origin)에서의 요청을 허용하게 됩니다.
+  // 개발 환경에서는 보통 이렇게 넓게 설정하고,
+  // 실제 서비스 배포 시에는 { origin: 'https://내-실제-도메인.com' } 와 같이 특정 출처만 허용합니다.
+  app.enableCors();
+
+  await app.listen(3000);
 }
 bootstrap();

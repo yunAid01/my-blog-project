@@ -64,3 +64,22 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Tests
 /my-blog-backend/coverage
 /my-blog-backend/.nyc_output
+
+# ===============================================================
+# ## Frontend Project Rules (`my-blog-frontend`)
+# ===============================================================
+
+# Dependencies
+/my-blog-frontend/node_modules
+
+# Build output
+/my-blog-frontend/.next/
+/my-blog-frontend/out/
+
+# Production image cache
+/my-blog-frontend/.vercel/
+
+# Next.js specific files
+/my-blog-frontend/next-env.d.ts
+/my-blog-frontend/*.tsbuildinfo
+/my-blog-frontend/next.config.js.bak
