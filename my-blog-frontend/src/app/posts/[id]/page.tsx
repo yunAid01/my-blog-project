@@ -1,4 +1,4 @@
-// src/app/posts/[id]/page.tsx
+// src/app/posts/[id]/page.tsx 상세페이지
 'use client'; // 버튼 클릭 등 상호작용이 필요하므로 클라이언트 컴포넌트로 변경
 
 import { useEffect, useState } from 'react';
@@ -61,6 +61,12 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
         <div className="text-gray-400 mb-8 border-b border-gray-700 pb-4 flex justify-between items-center">
           <span>Published on {new Date(post.createdAt).toLocaleDateString()}</span>
+          {/* post.author가 존재할 때만 링크를 보여줍니다. */}
+          {post.author && (
+            <Link href={`/users/${post.author.id}`} className="hover:underline">
+              by {post.author.email}
+            </Link>
+          )}
           {/* 작성자일 경우에만 수정/삭제 버튼을 보여줍니다. */}
           {isAuthor && (
             <div className="flex gap-2">

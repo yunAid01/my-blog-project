@@ -70,7 +70,10 @@ export class UserService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: { posts: true },
+    })
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

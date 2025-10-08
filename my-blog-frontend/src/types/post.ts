@@ -1,5 +1,4 @@
 // src/types/post.ts
-
 export type Post = {
   id: number;
   title: string;
@@ -7,4 +6,9 @@ export type Post = {
   createdAt: string;
   updatedAt: string;
   authorId: number;
+  // author 필드를 추가합니다.
+  author: {
+    id: number;
+    email: string;
+  };
 };

@@ -72,6 +72,11 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Dependencies
 /my-blog-frontend/node_modules
 
+# Environment Variables (절대 Git에 올리면 안됩니다!)
+/my-blog-frontend/.env
+/my-blog-frontend/.env.*
+!/my-blog-frontend/.env.example
+
 # Build output
 /my-blog-frontend/.next/
 /my-blog-frontend/out/

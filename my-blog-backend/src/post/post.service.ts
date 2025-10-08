@@ -32,20 +32,17 @@ export class PostService {
     // 'this.prisma.post'는 'schema.prisma'에 정의한 Post 모델에 접근하는 경로입니다.
     // .findMany()는 해당 모델의 모든 레코드(데이터)를 배열 형태로 반환하는 Prisma의 강력한 메서드입니다.
     // (이 코드는 SQL의 'SELECT * FROM Post;' 와 동일한 작업을 수행합니다.)
-    return this.prisma.post.findMany();
+    return this.prisma.post.findMany({
+      include: { author: {select : { id: true, email: true}}}
+    });
   }
 
   // 'findOne' 메서드: id가 일치하는 게시글 하나만 찾는 기능을 담당합니다.
   findOne(id: number) {
-    // 셰프가 '1번 메뉴' 주문을 받고, 공급팀에게 해당 재료를 찾아달라고 요청합니다.
-    // this.prisma.post.findUnique()는 @id나 @unique로 지정된
-    // 고유한 필드를 기준으로 단 하나의 레코드만 찾는 Prisma의 메서드입니다.
     return this.prisma.post.findUnique({
-      // where 조건절에 찾으려는 id를 전달합니다.
-      where: {
-        id: id, // JavaScript에서는 키와 값이 같으면 'id,' 처럼 축약 가능합니다.
-      },
-    });
+      where: { id },
+      include: { author: { select: { id: true, email: true}}}
+    })
   }
 
   // 내가 쓴 글만 찾는 메서드입니다.

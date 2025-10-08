@@ -11,33 +11,27 @@ interface PostCardProps {
     createdAt: string;
     updatedAt: string;
     authorId: number;
+    author: {
+      id: string;
+      email: string;
+    }
   }
 }
 
-
-// PostCard 컴포넌트는 'post'라는 이름의 데이터를 props로 받습니다.
 export default function PostCard({ post }: PostCardProps) {
   return (
-    // 2. Link 컴포넌트로 전체 div를 감싸서 클릭 가능한 링크로 만듭니다.
-    //    href 속성으로 각 게시글의 상세 페이지 경로를 동적으로 만들어줍니다.
     <Link href={`/posts/${post.id}`}>
       <div className="p-4 border border-gray-700 rounded-lg mb-4 hover:bg-gray-800 transition-colors cursor-pointer">
-        <h2 className="text-2xl font-semibold">{post.title}</h2>
-        <p className="text-gray-400 mt-2">{post.content}</p>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-semibold">{post.title}</h2>
+          {/* 3. 이제 author 정보를 사용할 수 있으니, 작성자 이메일을 표시해줍시다. */}
+          <span className="text-gray-500 text-sm">
+            {/* post.author가 존재할 경우를 대비하여 옵셔널 체이닝(?.)을 사용하면 더 안전합니다. */}
+            by {post.author.email || 'Unknown'}
+          </span>
+        </div>
+        <p className="text-gray-400 mt-2 truncate">{post.content}</p>
       </div>
     </Link>
   );
 }
-
-
-// 들어오는 props
-// props = {
-//     post: {
-//         id: number,
-//         title: string,
-//         content: string,
-//         createdAt:string,
-//         updatedAt: string,
-//         authorId: number,
-//     }
-// }
