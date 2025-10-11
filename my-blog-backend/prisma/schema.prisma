@@ -15,8 +15,7 @@ generator client {
 model User {
   // 기본 키 (Primary Key): 사용자를 구분하는 고유한 번호
   id        Int      @id @default(autoincrement())
-  
-  // 로그인 ID로 사용될 고유한 이메일
+  nickname  String   @unique
   email     String   @unique
   
   // 암호화되어 저장될 비밀번호
@@ -31,6 +30,12 @@ model User {
   // 이 필드는 DB 테이블에는 존재하지 않지만, Prisma를 통해 user.posts 형태로 
   // 이 사용자가 쓴 모든 글에 쉽게 접근할 수 있게 해줍니다.
   posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+
+  // follow
+  followers  Follow[] @relation("userIsFollwing")
+  followings Follow[] @relation("userIsFollowed")
 }
 
 
@@ -52,10 +57,60 @@ model Post {
   // @relation은 관계를 명시합니다.
   //   - fields: [authorId] -> 이 Post 모델의 'authorId' 필드를 사용하여 관계를 맺습니다.
   //   - references: [id]   -> 저 위 User 모델의 'id' 필드를 참조합니다.
-  author    User     @relation(fields: [authorId], references: [id])
-  
-  // 외래 키 (Foreign Key)
-  // User 테이블의 id와 연결될 실제 데이터베이스 컬럼입니다.
-  // 이 컬럼에는 글을 쓴 사용자의 id 번호가 저장됩니다.
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
+
+  comments   Comment[]
+  likes      Like[]
+}
+
+// ==========================================
+//          Comment (댓글) 모델
+// ==========================================
+model Comment {
+  id         Int      @id @default(autoincrement())
+  text       String  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // relation(user)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId   Int     
+  
+  // relation(post)
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     Int     
+}
+
+// ==========================================
+//          Like (좋아요) 모델
+// ==========================================
+model Like {
+  // relation (user)
+  author     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int     
+
+  // relation (post)
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     Int    
+
+  // 복합 key
+  @@id([userId, postId])   
+}
+
+// ==========================================
+//          Follow (유저 연결) 모델
+// ==========================================
+
+model Follow {
+  // 팔로잉 하는
+  following     User   @relation(name: "userIsFollwing", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId   Int     
+
+  // 팔로잉 당하는
+  followed      User   @relation(name: "userIsFollowed", fields: [followedId], references: [id], onDelete: Cascade)
+  followedId    Int 
+
+  // 복합 key
+  @@id([followingId, followedId])
 }

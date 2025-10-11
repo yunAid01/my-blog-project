@@ -13,4 +13,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(8, { message: '비밀번호는 최소 8자 이상이어야 합니다.' })
   password: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(2, { message: '닉네임은 최소 2자 이상이어야 합니다.' })
+  nickname: string;
 }

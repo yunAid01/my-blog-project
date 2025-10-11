@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException, UnauthorizedException  } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt'; // 1. bcrypt를 import 합니다.
 import { JwtService } from '@nestjs/jwt'; // 1. JwtService를 import 합니다.
 import { LoginUserDto } from './dto/login-user.dto';
+import type { User as UserModel } from '@prisma/client'; // 2. Prisma가 생성한 User 타입을 import
+import type { AuthenticatedUser } from './types/user,types';
 // (login-user.dto.ts 파일은 CreateUserDto와 내용이 동일합니다. 새로 만들어주세요.)
 
 @Injectable()
@@ -16,7 +18,7 @@ export class UserService {
 
   // create 메서드를 async/await를 사용하도록 변경합니다.
   async create(createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
+    const { email, password, nickname } = createUserDto;
 
     // 2. 비밀번호를 해싱합니다.
     // bcrypt.hash(평문 비밀번호, saltOrRounds)
@@ -27,7 +29,8 @@ export class UserService {
     const newUser = await this.prisma.user.create({
       data: {
         email: email,
-        password: hashedPassword, // 원본 비밀번호가 아닌 해시된 비밀번호를 저장합니다!
+        password: hashedPassword,
+        nickname: nickname,
       },
     });
 
@@ -64,23 +67,71 @@ export class UserService {
     };
   }
 
-
-  findAll() {
-    return `This action returns all user`;
+  // API 확인용
+  async findAll() {
+    const users = await this.prisma.user.findMany();
+    return users;
   }
 
-  findOne(id: number) {
-    return this.prisma.user.findUnique({
-      where: { id },
+  async findOne(id: number) {
+    const findOneUser = await this.prisma.user.findUnique({
+      where: { id: id },
       include: { posts: true },
     })
+    if (!findOneUser) {
+      throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
+    }
+    return findOneUser;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  // 유저정보 업그레이드
+  // id = 업데이터하려는 유저의id , user.id = 현재 로그인한 유저의 id
+  async update(
+    id: number,
+    user: AuthenticatedUser,
+    updateUserDto: UpdateUserDto
+  ) {
+    const userId = user.id
+
+    if (userId !== id) {
+      throw new UnauthorizedException('본인의 정보만 수정할 수 있습니다.');
+    }
+    const findUuser = await this.prisma.user.findUnique({ where: { id: userId }});
+    if (!findUuser) {
+      throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
+    }
+
+    try {
+      const updatedUser = await this.prisma.user.update({
+        where: { id: id },
+        data: updateUserDto,
+      });
+      return updatedUser;
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException('유저 정보 수정에 실패했습니다.');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  // 회원탈퇴
+  async remove(id: number, user: AuthenticatedUser) {
+    const userId = user.id
+
+    if (userId !== id) {
+      throw new UnauthorizedException('본인의 정보만 삭제할 수 있습니다.');
+    }
+    const findUuser = await this.prisma.user.findUnique({ where: { id: userId }});
+    if (!findUuser) {
+      throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
+    }
+    try {
+      await this.prisma.user.delete({
+        where: { id: id },
+      });
+      return { message: '유저 정보 삭제에 성공했습니다.' };
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException('유저 정보 삭제에 실패했습니다.');
+    }
   }
 }
