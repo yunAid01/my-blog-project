@@ -45,7 +45,10 @@ export class CommentController {
   // 댓글 삭제
   @Delete(':commentId')
   @UseGuards(AuthGuard('jwt'))
-  remove(@Param('commentId') commentId: string, @User() user: AuthenticatedUser) {
+  remove(
+    @Param('commentId') commentId: string,
+    @User() user: AuthenticatedUser
+  ) {
     return this.commentService.remove(+commentId, user.id);
   }
 }

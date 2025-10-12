@@ -33,7 +33,7 @@ export class PostService {
     // .findMany()는 해당 모델의 모든 레코드(데이터)를 배열 형태로 반환하는 Prisma의 강력한 메서드입니다.
     // (이 코드는 SQL의 'SELECT * FROM Post;' 와 동일한 작업을 수행합니다.)
     return this.prisma.post.findMany({
-      include: { author: {select : { id: true, email: true}}}
+      include: { author: {select : { id: true, email: true, nickname: true } } }
     });
   }
 
@@ -41,7 +41,7 @@ export class PostService {
   findOne(id: number) {
     return this.prisma.post.findUnique({
       where: { id },
-      include: { author: { select: { id: true, email: true}}}
+      include: { author: { select: { id: true, email: true, nickname: true } }}
     })
   }
 
@@ -51,6 +51,15 @@ export class PostService {
       where: {
         authorId: userId,
       },
+      include: {
+        author: {
+          select: {
+            id: true,
+            email: true,
+            nickname: true
+          }
+        }
+      }
     });
   }
 

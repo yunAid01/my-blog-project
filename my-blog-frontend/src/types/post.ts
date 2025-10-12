@@ -10,5 +10,6 @@ export type Post = {
   author: {
     id: number;
     email: string;
+    nickname: string;
   };
 };

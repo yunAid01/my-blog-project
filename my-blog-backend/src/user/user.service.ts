@@ -73,15 +73,23 @@ export class UserService {
     return users;
   }
 
-  async findOne(id: number) {
+  // userProfilePage에서 사용할 유저 + 게시글 조회
+  async findUserWithPosts(id: number) {
     const findOneUser = await this.prisma.user.findUnique({
       where: { id: id },
-      include: { posts: true },
+      include: { posts: {
+        include: {
+          author: {
+             select: { id: true, email: true, nickname: true } },
+        }
+      }},
     })
     if (!findOneUser) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }
-    return findOneUser;
+    const { password: _, ...userWithoutPassword } = findOneUser;
+    console.log(userWithoutPassword)
+    return userWithoutPassword;
   }
 
   // 유저정보 업그레이드

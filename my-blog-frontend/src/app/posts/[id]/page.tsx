@@ -64,7 +64,7 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
           {/* post.author가 존재할 때만 링크를 보여줍니다. */}
           {post.author && (
             <Link href={`/users/${post.author.id}`} className="hover:underline">
-              by {post.author.email}
+              by {post.author.nickname}
             </Link>
           )}
           {/* 작성자일 경우에만 수정/삭제 버튼을 보여줍니다. */}

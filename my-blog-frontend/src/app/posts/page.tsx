@@ -6,7 +6,7 @@ import PostCard from "@/components/PostCard";
 import type { Post } from "@/types"; // <--- 이 부분!
 
    // 백엔드 API로부터 모든 게시글을 가져오는 함수
-async function getPosts() {
+async function getAllPosts() {
   // 백엔드 서버의 /posts 엔드포인트에 GET 요청을 보냅니다.
   const response = await fetch('http://localhost:3000/posts');
   console.log(response); // response 확인
@@ -23,7 +23,7 @@ async function getPosts() {
 export default async function PostsPage() {
 
   // getPosts 함수를 호출하고, 반환된 게시글 목록을 posts 변수에 저장합니다.
-  const posts: Post[] = await getPosts();
+  const posts: Post[] = await getAllPosts();
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24 bg-gray-900 text-white">

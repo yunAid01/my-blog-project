@@ -7,6 +7,7 @@ import { UpdateLikeDto } from './dto/update-like.dto';
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
+  // 좋아요 추가하기
   @Post()
   create(@Body() createLikeDto: CreateLikeDto) {
     return this.likeService.create(createLikeDto);
@@ -15,18 +16,9 @@ export class LikeController {
   @Get()
   findAll() {
     return this.likeService.findAll();
-  }
+  }ㄴ
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.likeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto) {
-    return this.likeService.update(+id, updateLikeDto);
-  }
-
+  // 좋아요 취소하기
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.likeService.remove(+id);
