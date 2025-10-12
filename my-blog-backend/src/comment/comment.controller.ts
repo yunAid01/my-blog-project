@@ -5,9 +5,8 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 // usermodel type 생성
-import type { User as UserModel } from '@prisma/client'; // 2. Prisma가 생성한 User 타입을 import
 import { User } from 'src/user/decorator/user.decorater';
-
+import type { AuthenticatedUser } from 'src/user/types/user,types';
 @Controller('posts/:postId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
@@ -17,7 +16,7 @@ export class CommentController {
   create(
     @Param('postId') postId: string,
     @Body() createCommentDto: CreateCommentDto,
-    @User() user: UserModel
+    @User() user: AuthenticatedUser
   ) {
     return this.commentService.create(+postId, createCommentDto, user.id);
   }
@@ -27,18 +26,26 @@ export class CommentController {
     return this.commentService.findAll(+postId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+  @Get(':commentId')
+  findOne(@Param('commentId') commentid: string) {
+    return this.commentService.findOne(+commentid);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
+  // 댓글 수정 
+  @Patch(':commentId')
+  @UseGuards(AuthGuard('jwt')) 
+  update(
+    @Param('commentId') commentId: string,
+    @Body() updateCommentDto: UpdateCommentDto,
+    @User() user: AuthenticatedUser
+  ) {
+    return this.commentService.update(+commentId, updateCommentDto, user.id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  // 댓글 삭제
+  @Delete(':commentId')
+  @UseGuards(AuthGuard('jwt'))
+  remove(@Param('commentId') commentId: string, @User() user: AuthenticatedUser) {
+    return this.commentService.remove(+commentId, user.id);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,14 +8,19 @@ export class CommentService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 댓글 생성
-  create(postId: number, createCommentDto: CreateCommentDto, userId: number) {
-    return this.prisma.comment.create({
+  async create(
+    postId: number,
+    createCommentDto: CreateCommentDto,
+    userId: number
+  ) {
+    const newComments = await this.prisma.comment.create({
       data: {
         text: createCommentDto.text,
         authorId: userId,
         postId: postId,
       },
     });
+    return newComments;
   }
 
   // 특정 게시글의 모든 댓글 조회
@@ -39,15 +44,63 @@ export class CommentService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  // findOne 메서드를 '내부 검증용'으로도 활용할 수 있도록 실제 로직으로 채웁니다.
+  async findOne(commentid: number) {
+    const comment = await this.prisma.comment.findUnique({ where: { id: commentid }});
+    if (!comment) {
+      // 이제 '찾을 수 없음' 에러는 모두 NotFoundException으로 통일됩니다.
+      throw new NotFoundException(`ID #${commentid}에 해당하는 댓글을 찾을 수 없습니다.`);
+    }
+    return comment;
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(
+    commentId: number,
+    updateCommentDto: UpdateCommentDto,
+    userId: number
+  ) { const willbeUpdatedComment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+    if (!willbeUpdatedComment) {
+      throw new NotFoundException('댓글을 찾을 수 없습니다.');
+    }
+    // 인가
+    if (willbeUpdatedComment.authorId !== userId) { 
+      throw new ForbiddenException('이 댓글을 수정할 권한이 없습니다.');
+    }
+
+    try {
+      const updatedComment = await this.prisma.comment.update({
+        where: { id: commentId },
+        data: {
+          text: updateCommentDto.text,
+        }});
+      return updatedComment;
+    } catch (error) {
+      console.error(error)
+      throw new Error('Failed to update comment');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async remove(commentId: number, userId: number) {
+    const willbeDeletedComment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+    }); 
+    if (!willbeDeletedComment) {
+      throw new NotFoundException('Comment not found');
+    }
+    if (willbeDeletedComment.authorId !== userId) { 
+      throw new ForbiddenException('이 댓글을 삭제할 권한이 없습니다.');
+    }
+
+    try {
+      await this.prisma.comment.delete({
+        where: { id: commentId },
+      });
+      return { message: 'Comment deleted successfully' };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete comment');
+    }
   }
 }
