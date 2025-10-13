@@ -15,7 +15,7 @@ export class LikeController {
     return this.likeService.create(+postId, user.id);
   }
 
-  // 좋아요 카운트 및 포스트 좋아요 조회
+  // 좋아요 카운트 및 포스트 좋아요 상세 조회
   @Get()
   findAll() {
     return this.likeService.findAll();

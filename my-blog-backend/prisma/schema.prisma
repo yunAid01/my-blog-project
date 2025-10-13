@@ -34,8 +34,8 @@ model User {
   likes     Like[]
 
   // follow
-  followers  Follow[] @relation("userIsFollwing")
-  followings Follow[] @relation("userIsFollowed")
+  followings  Follow[] @relation("userIsFollwing")
+  followers   Follow[] @relation("userIsFollowed")
 }
 
 

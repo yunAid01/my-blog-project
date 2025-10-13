@@ -80,12 +80,17 @@ export class UserService {
   async findUserWithPosts(id: number) {
     const findOneUser = await this.prisma.user.findUnique({
       where: { id: id },
-      include: { posts: {
-        include: {
-          author: {
-             select: { id: true, email: true, nickname: true } },
+      include: { 
+        followers: true, 
+        followings: true,
+        posts: {
+          include: {
+            author: {
+              select: { id: true, email: true, nickname: true }
+            },
+          }
         }
-      }},
+      },
     })
     if (!findOneUser) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');

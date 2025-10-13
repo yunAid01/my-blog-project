@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { FollowService } from './follow.service';
-import { CreateFollowDto } from './dto/create-follow.dto';
-import { UpdateFollowDto } from './dto/update-follow.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/user/decorator/user.decorater';
+import type { AuthenticatedUser } from 'src/user/types/user,types';
 
-@Controller('follow')
+@Controller('user/:userId/follow')
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
+  // 팔로우하기
   @Post()
-  create(@Body() createFollowDto: CreateFollowDto) {
-    return this.followService.create(createFollowDto);
+  @UseGuards(AuthGuard('jwt'))
+  create(@Param('userId') followedUser: string, @User() user: AuthenticatedUser) {
+    return this.followService.create(+followedUser, user.id);
   }
 
   @Get()
@@ -22,13 +25,13 @@ export class FollowController {
     return this.followService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFollowDto: UpdateFollowDto) {
-    return this.followService.update(+id, updateFollowDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.followService.remove(+id);
+  // 언팔로우하기
+  @Delete()
+  @UseGuards(AuthGuard('jwt'))
+  remove(
+    @Param('userId') followedUser: string,
+    @User() user: AuthenticatedUser
+  ) {
+    return this.followService.remove(+followedUser, user.id);
   }
 }
