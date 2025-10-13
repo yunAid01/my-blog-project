@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from 'src/prisma/prisma.service'; // 1. PrismaService를 import 합니다.
@@ -33,16 +33,38 @@ export class PostService {
     // .findMany()는 해당 모델의 모든 레코드(데이터)를 배열 형태로 반환하는 Prisma의 강력한 메서드입니다.
     // (이 코드는 SQL의 'SELECT * FROM Post;' 와 동일한 작업을 수행합니다.)
     return this.prisma.post.findMany({
-      include: { author: {select : { id: true, email: true, nickname: true } } }
+      include: {
+        likes: true,
+        author: {
+          select: {
+            id: true,
+            email: true,
+            nickname: true
+          }
+        }
+      }
     });
   }
 
   // 'findOne' 메서드: id가 일치하는 게시글 하나만 찾는 기능을 담당합니다.
-  findOne(id: number) {
-    return this.prisma.post.findUnique({
-      where: { id },
-      include: { author: { select: { id: true, email: true, nickname: true } }}
+  async findOne(postId: number) {
+    const findOnePost = await this.prisma.post.findUnique({
+      where: { id: postId },
+      include: {
+        likes: true,
+        author: {
+          select: {
+            id: true,
+            email: true,
+            nickname: true
+          }
+        }
+      }
     })
+    if (!findOnePost) {
+      throw new NotFoundException('해당하는 포스트가 없습니다.');
+    }
+    return findOnePost;
   }
 
   // 내가 쓴 글만 찾는 메서드입니다.
@@ -52,6 +74,7 @@ export class PostService {
         authorId: userId,
       },
       include: {
+        likes: true,
         author: {
           select: {
             id: true,

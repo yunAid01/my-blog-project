@@ -19,6 +19,9 @@ export class UserService {
   // create 메서드를 async/await를 사용하도록 변경합니다.
   async create(createUserDto: CreateUserDto) {
     const { email, password, nickname } = createUserDto;
+    if (!email || !password || !nickname) {
+      throw new NotFoundException("이메일, 비밀번호, 닉네임은 필수 입력 사항입니다.");
+    }
 
     // 2. 비밀번호를 해싱합니다.
     // bcrypt.hash(평문 비밀번호, saltOrRounds)
