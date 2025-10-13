@@ -31,18 +31,18 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findUserWithPosts(+id);
+  findOne(@Param('id') userId: string) {
+    return this.userService.findUserWithAllData(+userId);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt')) // JWT 인증 가드를 적용합니다.
   update(
-    @Param('id') id: string,
+    @Param('id') userId: string,
     @User() user: AuthenticatedUser,
     @Body() updateUserDto: UpdateUserDto
   ) {
-    return this.userService.update(+id, user, updateUserDto);
+    return this.userService.update(+userId, user, updateUserDto);
   }
 
   // 유저 회원 삭제

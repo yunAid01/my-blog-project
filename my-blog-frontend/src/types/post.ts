@@ -12,4 +12,12 @@ export type Post = {
     email: string;
     nickname: string;
   };
+  likes: {
+    userId: number;
+    postId: number;
+    author: {
+      id: number;
+      nickname: string;
+    }
+  }
 };

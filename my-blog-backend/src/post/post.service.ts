@@ -51,7 +51,17 @@ export class PostService {
     const findOnePost = await this.prisma.post.findUnique({
       where: { id: postId },
       include: {
-        likes: true,
+        likes: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                email: true,
+                nickname: true
+              }
+            }
+          }
+        },
         author: {
           select: {
             id: true,
@@ -60,10 +70,11 @@ export class PostService {
           }
         }
       }
-    })
+    });
     if (!findOnePost) {
       throw new NotFoundException('해당하는 포스트가 없습니다.');
     }
+    console.log(findOnePost);
     return findOnePost;
   }
 

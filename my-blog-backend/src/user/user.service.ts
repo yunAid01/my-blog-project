@@ -5,7 +5,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt'; // 1. bcrypt를 import 합니다.
 import { JwtService } from '@nestjs/jwt'; // 1. JwtService를 import 합니다.
 import { LoginUserDto } from './dto/login-user.dto';
-import type { User as UserModel } from '@prisma/client'; // 2. Prisma가 생성한 User 타입을 import
 import type { AuthenticatedUser } from './types/user,types';
 // (login-user.dto.ts 파일은 CreateUserDto와 내용이 동일합니다. 새로 만들어주세요.)
 
@@ -77,21 +76,70 @@ export class UserService {
   }
 
   // userProfilePage에서 사용할 유저 + 게시글 조회
-  async findUserWithPosts(id: number) {
+  async findUserWithAllData(userId: number) {
     const findOneUser = await this.prisma.user.findUnique({
-      where: { id: id },
-      include: { 
-        followers: true, 
-        followings: true,
+      where: { id: userId },
+      include: {
         posts: {
           include: {
             author: {
-              select: { id: true, email: true, nickname: true }
-            },
+              select: {
+                id: true,
+                email: true,
+                nickname: true
+              }
+            }
+          }
+        },
+        // 날 팔로우 하는 사람
+        followers: {
+          where: {
+            followingId: userId
+          },
+          include: {
+            follower: {
+              select: {
+                id: true,
+                email: true,
+                nickname: true
+              }
+            }
+          }
+        },
+        // 내가 팔로우 하는 사람
+        followings: {
+          where: {
+            followerId: userId
+          },
+          include: {
+            following: {
+              select: {
+                id: true,
+                email: true,
+                nickname: true
+              }
+            }
+          }
+        },
+        likes: {
+          include: {
+            post: {
+              include: {
+                author: {
+                  select: {
+                    id: true,
+                    email: true,
+                    nickname: true
+                  }
+                }
+              }
+            }
           }
         }
-      },
-    })
+
+      }
+    });
+
     if (!findOneUser) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }
@@ -107,14 +155,8 @@ export class UserService {
     user: AuthenticatedUser,
     updateUserDto: UpdateUserDto
   ) {
-    const userId = user.id
-
-    if (userId !== id) {
+    if (id !== user.id) {
       throw new UnauthorizedException('본인의 정보만 수정할 수 있습니다.');
-    }
-    const findUuser = await this.prisma.user.findUnique({ where: { id: userId }});
-    if (!findUuser) {
-      throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }
 
     try {
@@ -136,10 +178,7 @@ export class UserService {
     if (userId !== id) {
       throw new UnauthorizedException('본인의 정보만 삭제할 수 있습니다.');
     }
-    const findUuser = await this.prisma.user.findUnique({ where: { id: userId }});
-    if (!findUuser) {
-      throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
-    }
+
     try {
       await this.prisma.user.delete({
         where: { id: id },

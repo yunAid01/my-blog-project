@@ -22,6 +22,11 @@ export default function Header() {
             // 로그인 상태일 때
             <>
               <li>
+                <Link href="/users" className="hover:text-gray-300 transition-colors">
+                  Profile
+                </Link>
+              </li>
+              <li>
                 <Link href="/posts/create" className="bg-blue-500 hover:bg-blue-700 text-white px-3 py-2 rounded transition-colors text-sm font-semibold">
                   New Post
                 </Link>

@@ -11,27 +11,20 @@ export class FollowController {
   // 팔로우하기
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  create(@Param('userId') followedUser: string, @User() user: AuthenticatedUser) {
-    return this.followService.create(+followedUser, user.id);
-  }
-
-  @Get()
-  findAll() {
-    return this.followService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.followService.findOne(+id);
+  create(
+    @Param('userId') followingId: string, // 팔로우 당하는 사람
+    @User() user: AuthenticatedUser // 팔로우 하는 사람 
+  ) {
+    return this.followService.create(+followingId, user.id);
   }
 
   // 언팔로우하기
   @Delete()
   @UseGuards(AuthGuard('jwt'))
   remove(
-    @Param('userId') followedUser: string,
+    @Param('userId') followingId: string, // 언팔로우 당하는 사람
     @User() user: AuthenticatedUser
   ) {
-    return this.followService.remove(+followedUser, user.id);
+    return this.followService.remove(+followingId, user.id);
   }
 }

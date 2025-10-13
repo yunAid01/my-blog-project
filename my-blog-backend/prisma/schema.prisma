@@ -34,8 +34,30 @@ model User {
   likes     Like[]
 
   // follow
-  followings  Follow[] @relation("userIsFollwing")
-  followers   Follow[] @relation("userIsFollowed")
+  // 팔로우 하는 사람
+  followings  Follow[] @relation("Follows") 
+
+  // 팔로우 당하는 사람
+  followers   Follow[] @relation("FollowedBy")
+}
+
+
+
+// ==========================================
+//          Follow (유저 연결) 모델
+// ==========================================
+
+model Follow {
+  // 팔로우를 하는 사람 (행동의 주체)
+  follower     User   @relation(name: "Follows", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId   Int     
+
+  // 팔로잉 당하는 (행동의 대상)
+  following    User   @relation(name: "FollowedBy", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId  Int 
+
+  // 복합 key
+  @@id([followerId, followingId])
 }
 
 
@@ -98,19 +120,3 @@ model Like {
   @@id([userId, postId])   
 }
 
-// ==========================================
-//          Follow (유저 연결) 모델
-// ==========================================
-
-model Follow {
-  // 팔로잉 하는
-  following     User   @relation(name: "userIsFollwing", fields: [followingId], references: [id], onDelete: Cascade)
-  followingId   Int     
-
-  // 팔로잉 당하는
-  followed      User   @relation(name: "userIsFollowed", fields: [followedId], references: [id], onDelete: Cascade)
-  followedId    Int 
-
-  // 복합 key
-  @@id([followingId, followedId])
-}

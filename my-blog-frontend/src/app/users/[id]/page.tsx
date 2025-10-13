@@ -29,6 +29,18 @@ export default async function UserProfilePage({ params }: UserParamsProps) {
         <p className="text-gray-400 mb-8">
           총 {user.posts.length}개의 게시글을 작성했습니다.
         </p>
+        
+        {/* 팔로우 팔로잉 */}
+        <div className="flex gap-4 mb-8">
+          <div>
+            <strong className="text-lg">{user.followers.length}</strong>
+            <span className="text-gray-400 ml-2">팔로워</span>
+          </div>
+          <div>
+            <strong className="text-lg">{user.followings.length}</strong>
+            <span className="text-gray-400 ml-2">팔로잉</span>
+          </div>
+        </div>
 
         <div className="flex flex-col gap-4">
           {user.posts.length > 0 ? (

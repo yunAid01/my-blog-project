@@ -28,9 +28,9 @@ export default async function PostsPage() {
   return (
     <main className="flex min-h-screen flex-col items-center p-24 bg-gray-900 text-white">
       <h1 className="text-5xl font-bold">전체 게시글 목록</h1>
-      <p className="mt-4 text-lg">백엔드 API 서버에서 직접 가져온 데이터입니다.</p>
+      <p className="mt-4 text-lg">언제나 긍정적이게, 그리고 한번 하는거면 진짜 후회하지 않게</p>
     
-       <div className="mt-8 w-full max-w-2xl">
+      <div className="mt-8 w-full max-w-2xl">
         {/* 2. 복잡한 div 대신 PostCard 컴포넌트를 사용하고, post 데이터를 prop으로 전달합니다. */}
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />

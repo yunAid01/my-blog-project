@@ -82,6 +82,17 @@ export default function PostDetailPage({ params }: { params: { id: string } }) {
         <div className="prose prose-invert max-w-none text-lg leading-relaxed">
           <p>{post.content || '내용이 없습니다.'}</p>
         </div>
+
+        {/* likes */}
+        <div className="mt-8">
+          <strong>좋아요 :  {post.likes.length} 개</strong>
+        </div>
+      </div>
+      
+      <div className="mt-8">
+        <Link href="/posts" className="text-blue-400 hover:underline">
+          &larr; Back to all posts
+        </Link>
       </div>
     </main>
   );

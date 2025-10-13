@@ -10,6 +10,7 @@ export default function SignupPage() {
   // 1. '비밀번호 확인' 입력값을 저장할 state를 추가합니다.
   const [passwordConfirm, setPasswordConfirm] = useState('');
   // 2. 에러 메시지를 저장할 state를 추가합니다.
+  const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
 
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function SignupPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, nickname, password }),
       });
 
       if (!response.ok) {
@@ -84,6 +85,21 @@ export default function SignupPage() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-400 text-sm font-bold mb-2" htmlFor="nickname">
+              닉네임
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 bg-gray-700 text-white leading-tight focus:outline-none focus:shadow-outline"
+              id="nickname"
+              type="text"
+              placeholder="Nickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
               required
             />
           </div>
