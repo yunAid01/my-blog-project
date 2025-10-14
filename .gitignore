@@ -88,3 +88,27 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 /my-blog-frontend/next-env.d.ts
 /my-blog-frontend/*.tsbuildinfo
 /my-blog-frontend/next.config.js.bak
+
+# ===============================================================
+# ## Frontend Project Rules (`my-blog-frontend-ver2`)
+# ===============================================================
+
+# Dependencies
+/my-blog-frontend-ver2/node_modules
+
+# Environment Variables (절대 Git에 올리면 안됩니다!)
+/my-blog-frontend-ver2/.env
+/my-blog-frontend-ver2/.env.*
+/my-blog-frontend-ver2/.env.example
+
+# Build output
+/my-blog-frontend-ver2/.next/
+/my-blog-frontend-ver2/out/
+
+# Production image cache
+/my-blog-frontend-ver2/.vercel/
+
+# Next.js specific files
+/my-blog-frontend-ver2/next-env.d.ts
+/my-blog-frontend-ver2/*.tsbuildinfo
+/my-blog-frontend-ver2/next.config.js.bak
