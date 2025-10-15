@@ -41,6 +41,17 @@ export class PostService {
             email: true,
             nickname: true
           }
+        },
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                nickname: true,
+                email: true
+              }
+            }
+          }
         }
       }
     });

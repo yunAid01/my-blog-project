@@ -1,0 +1,63 @@
+'use client'; 
+
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { createComment } from "@/api/comment"
+import { CreateCommentDto } from "@/types"
+import { useState } from "react"
+
+
+interface CommentFormProps {
+    postId: number
+}
+
+export default function CommentForm ({ postId }: CommentFormProps) {
+    const [text, setText] = useState('');
+    const queryClient = useQueryClient()
+
+    const {
+        mutate: createCommentAction,
+        isPending
+    } = useMutation({
+        mutationFn: createComment,
+        onSuccess: (data) => {
+            console.log(`댓글 작성완료: ${data}`)
+        },
+        onError: (error) => {
+            alert(`댓글 작성 실패: ${error.message}`);
+            // 'posts' 라는 이름표가 붙은 데이터를 새로고침하라고 알려줍니다.
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            // 입력창을 깨끗하게 비워줍니다.
+            setText('');
+        }
+    });
+    
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        createCommentAction({ postId, text });
+    };
+
+    return(
+        <>
+            <div>
+                <form onSubmit={handleSubmit} className="flex items-center space-x-2 border-t border-gray-100 pt-3 mt-3">
+                    <input
+                        type="text"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="댓글 달기..."
+                        className="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
+                        disabled={isPending}
+                    />
+                    <button
+                        type="submit" 
+                        // !comment.trim() => 댓글 작성을 하지 않았다면 => disabled
+                        disabled={isPending || !text.trim()}
+                        className="text-indigo-500 font-semibold text-sm disabled:text-gray-300"
+                    >
+                        게시
+                    </button>
+                </form>
+            </div>
+        </>
+    )
+}

@@ -1,5 +1,29 @@
 // 게시물의 타입도 정의해두면 좋습니다.
 
+export interface Comment {
+    id: number;
+    text: string;
+    createdAt: string;
+    updatedAt: string;
+    author: {
+        id: number;
+        nickname: string;
+        email: string;
+        }
+}
+export interface CreateCommentDto {
+    text: string;
+}
+
+export interface Like {
+    userId: string;
+    postId: string;
+    author: {
+        id: number;
+        nickanme: string;
+        email: string;
+    }
+}
 // database model post
 export interface Post {
     id: number;
@@ -13,26 +37,8 @@ export interface Post {
         nickname: string;
         email: string;
     };
-    comments: {
-        id: number;
-        text: string;
-        createdAt: string;
-        updatedAt: string;
-        author: {
-            id: number;
-            nickname: string;
-            email: string;
-        }
-    }[];
-    likes: {
-        userId: string;
-        postId: string;
-        author: {
-            id: number;
-            nickanme: string;
-            email: string;
-        }
-    }[];
+    comments: Comment[];
+    likes: Like[];
 }
 
 

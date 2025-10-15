@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 
 // components
 import PostForm from '@/components/Postform';
+import PostCard from "@/components/PostCard";
 
 export default function Home() {
   const {
@@ -32,15 +33,8 @@ export default function Home() {
       <h1>인스타그램 피드</h1>
       <div>
         {posts?.map((post) => (
-          <div key={post.id} style={{ border: '1px solid #ccc', margin: '10px' }}>
-            <p><strong>{post.author.nickname}</strong></p>
-            <p>{post.content}</p>
-            <small>{new Date(post.createdAt).toLocaleString()}</small>
-          </div>
+          <PostCard key={post.id} post={post} />
         ))}
-      </div>
-      <div>
-        <PostForm />
       </div>
     </main>
   );
