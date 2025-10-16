@@ -15,7 +15,7 @@ export default function Header() {
     const handleLogout = () => {
         localStorage.removeItem('jwt-token');
         localStorage.removeItem('user-id')
-        queryClient.setQueryData(['me'], null);
+        queryClient.setQueryData(['me'], null); 
         router.push('/login');
     };
 

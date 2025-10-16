@@ -29,7 +29,6 @@ export default function Home() {
 
   return (
     <main>
-      <h1>인스타그램 피드</h1>
       <div>
         {posts?.map((post) => (
           <PostCard key={post.id} post={post} />

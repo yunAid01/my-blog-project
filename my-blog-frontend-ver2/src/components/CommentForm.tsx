@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createComment } from "@/api/comment"
-import { CreateCommentDto } from "@/types"
 import { useState } from "react"
 
 
@@ -21,11 +20,17 @@ export default function CommentForm ({ postId }: CommentFormProps) {
         mutationFn: createComment,
         onSuccess: (data) => {
             console.log(`댓글 작성완료: ${data}`)
+
+            // ✅ 1. 상세 페이지의 데이터를 무효화합니다.
+            queryClient.invalidateQueries({ queryKey: ['post', postId] });
+            
+            // ✅ 2. 메인 페이지의 전체 게시물 목록 데이터도 무효화합니다.
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            setText('');
         },
         onError: (error) => {
             alert(`댓글 작성 실패: ${error.message}`);
-            // 'posts' 라는 이름표가 붙은 데이터를 새로고침하라고 알려줍니다.
-            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            throw new Error(`댓글 작성 오류 : ${error.message}`)
             // 입력창을 깨끗하게 비워줍니다.
             setText('');
         }

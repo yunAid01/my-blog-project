@@ -14,6 +14,18 @@ export const getPosts = async (): Promise<Post[]>=> {
     return response.json();
 };
 
+// get post by Id
+export const getPostById = async (postId: number): Promise<Post> => {
+    const API_URL  = process.env.NEXT_PUBLIC_API_URL 
+    const response = await fetch(`${API_URL}/posts/${postId}`);
+
+    if (!response.ok) {
+    throw new Error('게시물을 불러오는 데 실패했습니다.');
+    }
+    return response.json();
+}
+
+
 // post(create)
 export const createPost = async (newPost: CreatePostDto) => {
     const API_URL  = process.env.NEXT_PUBLIC_API_URL;

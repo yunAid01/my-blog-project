@@ -1,7 +1,6 @@
 // src/compoenets/LikeButton.tsx
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { createLike } from "@/api/like";
 import { Post } from "@/types";
 

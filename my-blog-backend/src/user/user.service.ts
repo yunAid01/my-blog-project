@@ -77,6 +77,8 @@ export class UserService {
     return users;
   }
 
+  // frontend => userGetMe method -> 로그인 데이터 유지
+  // controller api_url/user/:id/me
   async findMe(userId: number) {
     const me = await this.prisma.user.findUnique({
       where: { id: userId }
@@ -96,6 +98,8 @@ export class UserService {
       include: {
         posts: {
           include: {
+            likes: true,
+            comments: true,
             author: {
               select: {
                 id: true,

@@ -25,7 +25,7 @@ export default function PostCard({ post }: PostCardProps) {
 
 
     const {
-        data: user, isLoading
+        data: user
     } =useUser()
     const [likeCount, setLikeCount] = useState(post.likes.length);
     const isLiked = post.likes.some(like => like.userId === user?.id);
@@ -49,12 +49,11 @@ export default function PostCard({ post }: PostCardProps) {
 
     // handlel
     const handleLikeClick = (e: React.FormEvent) => {
+        e.preventDefault();
         if (!user) {
             alert('로그인이 필요합니다..')
             router.push('/login')
         }
-        e.preventDefault();
-
         if (isLiked) { 
             // 좋아요 취소기능
             setLikeCount(prev => prev - 1)
@@ -66,14 +65,6 @@ export default function PostCard({ post }: PostCardProps) {
         }
     }
 
-
-     // 3. 댓글 아이콘을 클릭했을 때 실행될 함수
-    const [isCommentOpen, setIsCommentOpen] = useState(false);   
-    const handleToggleComment = () => {
-        // (false -> true, true -> false)
-        setIsCommentOpen(!isCommentOpen);
-    };
-
     return (
         // 전체 카드를 감싸는 컨테이너
         // max-w-xl: 최대 너비 지정 (너무 넓어지지 않게)
@@ -83,6 +74,7 @@ export default function PostCard({ post }: PostCardProps) {
         // rounded-xl: 모서리를 둥글게 (xl 사이즈로)
         // my-4: 위아래 바깥 여백 (margin-top, margin-bottom)
         // shadow-sm: 부드러운 그림자 효과
+        
         <div className="max-w-xl mx-auto bg-white border border-gray-200 rounded-xl my-4 shadow-sm">
             {/* 1. 카드 헤더: 작성자 정보 */}
             <div className="flex items-center p-4">
@@ -107,9 +99,12 @@ export default function PostCard({ post }: PostCardProps) {
             {/* 2. 게시물 본문 (이미지가 있다면 여기에 넣으면 좋아요) */}
             {/* 우선 제목과 내용을 표시합니다. */}
             <div className="px-4 pb-4">
-                <h2 className="font-semibold text-lg mb-2">{post.title}</h2>
-                <p className="text-gray-700 text-sm">{post.content}</p>
+                <Link href={`posts/${post.id}`}>
+                    <h2 className="font-semibold text-lg mb-2">{post.title}</h2>
+                    <p className="text-gray-700 text-sm">{post.content}</p>
+                </Link>
             </div>
+            
             
             {/* 3. 액션 버튼: 좋아요, 댓글 */}
             <div className="px-4 flex items-center space-x-4">
@@ -138,12 +133,13 @@ export default function PostCard({ post }: PostCardProps) {
                 </button>
                 
                 {/* 댓글 버튼 */}
-                {/* 댓글 창을 열고 닫을 '댓글' 아이콘 버튼 */}  
-                <button onClick={handleToggleComment}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                </button>
+                <Link href={`/posts/${post.id}`}>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                </Link>
             </div>
 
             {/* 4. 좋아요 개수 */}
@@ -162,23 +158,16 @@ export default function PostCard({ post }: PostCardProps) {
 
             {/* 6. 댓글 섹션 */}
             <div className="px-4 pb-4 border-t border-gray-100 mt-2 pt-2">
-                {/* 댓글 작성 폼을 보여줄지 말지 결정하는 곳 */}
-                <div className="px-4 pb-3">
-                     {/* isCommentOpen 상태가 true일 때만 CommentForm을 렌더링(보여주기)합니다. */}
-                    {isCommentOpen && <CommentForm postId={post.id} />}
-                </div>
-
                 {/* 댓글 개수 보여주기 (옵션) */}
-                <p className="text-sm text-gray-500 mb-2">
-                    댓글 {post.comments.length}개 모두 보기
-                </p>
+                <Link href={`/posts/${post.id}`}>
+                    <p className="text-sm text-gray-500 mb-2">
+                        댓글 {post.comments.length}개 모두 보기
+                    </p>
+                </Link>
 
-                {/* 댓글 목록 */}
-                <div className="space-y-2">
-                    {post.comments && post.comments.length > 0 && 
-                        post.comments.slice(0, 2).map((comment) => ( // 예시로 최근 2개만 보여주기
-                            <CommentCard key={comment.id} comment={comment} />
-                        ))}
+                {/* 댓글 작성 폼 */}
+                <div className="px-4 pb-3">
+                    <CommentForm postId={post.id} />
                 </div>
             </div>
         </div>
