@@ -1,114 +1,54 @@
 # ===============================================================
 # ## Global / OS / IDE Rules (프로젝트 전체 공통 규칙)
 # ===============================================================
-
-# OS generated files
+# 운영체제 및 IDE가 자동으로 생성하는 파일
 .DS_Store
-Thumbs.db
+.vscode/
+.idea/
 
-# Logs
+# 로그 파일
 logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode (루트 폴더의 .vscode 설정만 공유)
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
 
 # ===============================================================
-# ## Backend Project Rules (`my-blog-backend`)
+# ## Monorepo & Dependency Rules (모노레포 및 의존성 규칙)
 # ===============================================================
+# 모든 node_modules 폴더를 무시 (가장 중요!)
+# 이제 각 프로젝트 폴더에 따로 적을 필요가 없습니다.
+**/node_modules
 
-# Dependencies
-/my-blog-backend/node_modules
-
-# Build output
-/my-blog-backend/dist
-/my-blog-backend/build
-
-# Environment Variables (절대 Git에 올리면 안됩니다!)
-/my-blog-backend/.env
-/my-blog-backend/.env.*
-!/my-blog-backend/.env.example
-
-# Prisma
-/my-blog-backend/prisma/dev.db
-/my-blog-backend/prisma/dev.db-journal
-
-# Tests
-/my-blog-backend/coverage
-/my-blog-backend/.nyc_output
+# pnpm이 사용하는 저장소 폴더
+.pnpm-store
 
 # ===============================================================
-# ## Frontend Project Rules (`my-blog-frontend`)
+# ## Project Build Artifacts (프로젝트 빌드 결과물)
 # ===============================================================
+# Next.js (프론트엔드) 빌드 결과물
+apps/my-blog-frontend-ver2/.next/
+apps/my-blog-frontend-ver2/out/
 
-# Dependencies
-/my-blog-frontend/node_modules
-
-# Environment Variables (절대 Git에 올리면 안됩니다!)
-/my-blog-frontend/.env
-/my-blog-frontend/.env.*
-!/my-blog-frontend/.env.example
-
-# Build output
-/my-blog-frontend/.next/
-/my-blog-frontend/out/
-
-# Production image cache
-/my-blog-frontend/.vercel/
-
-# Next.js specific files
-/my-blog-frontend/next-env.d.ts
-/my-blog-frontend/*.tsbuildinfo
-/my-blog-frontend/next.config.js.bak
+# NestJS (백엔드) 빌드 결과물
+apps/my-blog-backend/dist/
 
 # ===============================================================
-# ## Frontend Project Rules (`my-blog-frontend-ver2`)
+# ## Environment & Sensitive Files (환경변수 및 민감 파일)
 # ===============================================================
+# 모든 .env 파일을 무시합니다. (보안상 매우 중요!)
+# .env.example 파일은 공유해야 하므로 무시하지 않습니다.
+.env
+.env.*
+!.env.example
 
-# Dependencies
-/my-blog-frontend-ver2/node_modules
+# Prisma SQLite 데이터베이스 파일
+apps/my-blog-backend/prisma/dev.db
+apps/my-blog-backend/prisma/dev.db-journal
 
-# Environment Variables (절대 Git에 올리면 안됩니다!)
-/my-blog-frontend-ver2/.env
-/my-blog-frontend-ver2/.env.*
-/my-blog-frontend-ver2/.env.example
-
-# Build output
-/my-blog-frontend-ver2/.next/
-/my-blog-frontend-ver2/out/
-
-# Production image cache
-/my-blog-frontend-ver2/.vercel/
-
-# Next.js specific files
-/my-blog-frontend-ver2/next-env.d.ts
-/my-blog-frontend-ver2/*.tsbuildinfo
-/my-blog-frontend-ver2/next.config.js.bak
+# ===============================================================
+# ## Generated Files (자동 생성 파일)
+# ===============================================================
+# Next.js 타입 파일
+apps/my-blog-frontend-ver2/next-env.d.ts
