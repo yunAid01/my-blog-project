@@ -8,36 +8,70 @@ import CommentCard from "./CommentCard";
 import Link from "next/link";
 import LikeButton from "./LikeButton";
 import CommentForm from "./CommentForm";
-import { useState } from "react";
+import React, { useState } from "react";
+import { timeAgo } from "@/lib/time"; // 작성날짜 관련
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createLike, deleteLike } from "@/api/like";
+import { useUser } from "@/hooks/useUser";
+import { useRouter } from 'next/navigation';
+
+
 interface PostCardProps {
     post: Post;
 }
 
 export default function PostCard({ post }: PostCardProps) {
+    const router = useRouter()
 
-    const [isCommentOpen, setIsCommentOpen] = useState(false);
-    // 3. 댓글 아이콘을 클릭했을 때 실행될 함수
+
+    const {
+        data: user, isLoading
+    } =useUser()
+    const [likeCount, setLikeCount] = useState(post.likes.length);
+    const isLiked = post.likes.some(like => like.userId === user?.id);
+    // 좋아요 관련 로직
+    const queryClinet = useQueryClient()
+    
+    const {
+        mutate: toggleLikeAction,
+        isPending
+    } = useMutation({
+        mutationFn: isLiked ? deleteLike : createLike,
+        onSuccess: () => {
+            console.log('성공적으로 좋아요가 실행되었습니다')
+            queryClinet.invalidateQueries({ queryKey: ['posts']})   
+        },
+        onError: (error) => {
+            console.error(`에러 발생${error.message}`)
+            alert(`에러 발생 : ${error.message}`)
+        }
+    })
+
+    // handlel
+    const handleLikeClick = (e: React.FormEvent) => {
+        if (!user) {
+            alert('로그인이 필요합니다..')
+            router.push('/login')
+        }
+        e.preventDefault();
+
+        if (isLiked) { 
+            // 좋아요 취소기능
+            setLikeCount(prev => prev - 1)
+            toggleLikeAction(post.id)
+        } else {
+            // 좋아요 추가기능
+            setLikeCount(prev => prev + 1)
+            toggleLikeAction(post.id)
+        }
+    }
+
+
+     // 3. 댓글 아이콘을 클릭했을 때 실행될 함수
+    const [isCommentOpen, setIsCommentOpen] = useState(false);   
     const handleToggleComment = () => {
-        // 현재 상태의 반대 값으로 상태를 변경합니다.
         // (false -> true, true -> false)
         setIsCommentOpen(!isCommentOpen);
-    };
-
-
-    // 날짜를 '5시간 전', '2일 전' 처럼 예쁘게 보여주기 위한 간단한 함수
-    const timeAgo = (date: string) => {
-        const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
-        let interval = seconds / 31536000;
-        if (interval > 1) return Math.floor(interval) + "년 전";
-        interval = seconds / 2592000;
-        if (interval > 1) return Math.floor(interval) + "달 전";
-        interval = seconds / 86400;
-        if (interval > 1) return Math.floor(interval) + "일 전";
-        interval = seconds / 3600;
-        if (interval > 1) return Math.floor(interval) + "시간 전";
-        interval = seconds / 60;
-        if (interval > 1) return Math.floor(interval) + "분 전";
-        return Math.floor(seconds) + "초 전";
     };
 
     return (
@@ -80,10 +114,31 @@ export default function PostCard({ post }: PostCardProps) {
             {/* 3. 액션 버튼: 좋아요, 댓글 */}
             <div className="px-4 flex items-center space-x-4">
                 {/* 좋아요 버튼 */}
-                <LikeButton postId={post.id} initialLikesCount={post.likes.length} />
+                <button onClick={handleLikeClick} disabled={isPending}>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        // 1. className을 isLiked 값에 따라 동적으로 변경합니다.
+                        className={`h-6 w-6 transition ${
+                            isLiked
+                                ? 'text-red-500' // isLiked가 true이면, 하트 색을 빨간색으로
+                                : 'text-gray-700 hover:text-red-500' // false이면, 회색(마우스 올리면 빨간색)으로
+                        }`}
+                        // 2. fill 속성도 isLiked 값에 따라 동적으로 변경합니다.
+                        fill={isLiked ? 'currentColor' : 'none'} // isLiked가 true이면, 내부를 현재 색(빨간색)으로 채웁니다.
+                        viewBox="0 0 24 24"
+                        stroke="currentColor" // stroke 색상은 className의 text 색상을 따라갑니다.
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.672l1.318-1.354a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+                        />
+                    </svg>
+                </button>
                 
                 {/* 댓글 버튼 */}
-                {/* 댓글 창을 열고 닫을 '댓글' 아이콘 버튼 */}
+                {/* 댓글 창을 열고 닫을 '댓글' 아이콘 버튼 */}  
                 <button onClick={handleToggleComment}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -94,8 +149,8 @@ export default function PostCard({ post }: PostCardProps) {
             {/* 4. 좋아요 개수 */}
             <div className="px-4 py-2">
                 <p className="font-bold text-sm text-gray-800">
-                    좋아요 {post.likes.length}개
-                </p>
+                    좋아요 {likeCount}개
+                </p>    
             </div>
             
             {/* 5. 작성 날짜 */}

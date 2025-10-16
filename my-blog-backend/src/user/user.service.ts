@@ -62,10 +62,12 @@ export class UserService {
     const payload = { email: user.email, sub: user.id };
     const accessToken = this.jwtService.sign(payload);
 
+    const { password: _ ,...userWithoutPassword } = user;
     // 6. 생성된 출입증을 반환합니다.
     return {
       message: '로그인 성공!',
       accessToken,
+      user: userWithoutPassword
     };
   }
 
@@ -73,6 +75,18 @@ export class UserService {
   async findAll() {
     const users = await this.prisma.user.findMany();
     return users;
+  }
+
+  async findMe(userId: number) {
+    const me = await this.prisma.user.findUnique({
+      where: { id: userId }
+    })
+    if (!me) {
+      throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
+    }
+    const { password: _, ...userWithoutPassword } = me;
+    console.log(userWithoutPassword);
+    return userWithoutPassword
   }
 
   // userProfilePage에서 사용할 유저 + 게시글 조회

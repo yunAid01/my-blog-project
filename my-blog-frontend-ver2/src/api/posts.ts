@@ -31,7 +31,7 @@ export const createPost = async (newPost: CreatePostDto) => {
     return response.json();
 }
 
-// update
+// (update)
 export const updatePost = async (postId: number, updatedost: UpdatePostDto) => {
     const API_URL  = process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${API_URL}/posts/${postId}`, {

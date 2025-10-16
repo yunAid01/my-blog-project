@@ -30,6 +30,12 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get(':id/me')
+  @UseGuards(AuthGuard('jwt'))
+  findMe(@Param('id') userId: string) {
+    return this.userService.findMe(+userId);
+  };
+
   @Get(':id')
   findOne(@Param('id') userId: string) {
     return this.userService.findUserWithAllData(+userId);

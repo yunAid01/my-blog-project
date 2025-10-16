@@ -6,7 +6,6 @@ import { getPosts } from "@/api/posts";
 import { useQuery } from '@tanstack/react-query';
 
 // components
-import PostForm from '@/components/Postform';
 import PostCard from "@/components/PostCard";
 
 export default function Home() {

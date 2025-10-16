@@ -10,13 +10,13 @@ interface LikeButtonProps {
     initialLikesCount: number;
 }
 export default function LikeButton ({ post, initialLikesCount }: LikeButtonProps) {
-
-
+    const [likeCount, seti]
     const [isLiked, setIsLiked] = useState(false);
     
     // likeAction
     const {
-        mutate: createLikeAction
+        mutate: createLikeAction,
+
     } = useMutation({
         mutationFn: createLike,
         onSuccess: () => {

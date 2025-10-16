@@ -16,8 +16,8 @@ export interface CreateCommentDto {
 }
 
 export interface Like {
-    userId: string;
-    postId: string;
+    userId: number;
+    postId: number;
     author: {
         id: number;
         nickanme: string;

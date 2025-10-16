@@ -3,15 +3,16 @@
 
 import React, { useState } from 'react';
 // useQuery 대신 useMutation을 가져옵니다!
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { userLogin } from '@/api/auth'; // 우리가 만든 userLogin API 함수
+import { userLogin, getMe } from '@/api/auth'; // 우리가 만든 userLogin API 함수
 
 
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const queryClinet = useQueryClient();
 
     // useMutation -> loainAction
     const { 
@@ -22,6 +23,7 @@ export default function LoginPage() {
         mutationFn: userLogin,
         onSuccess: (data) => {
             console.log(`로그인 성공 : ${data}`);
+            queryClinet.invalidateQueries({ queryKey: ['me']})
             alert('로그인에 성공했습니다 !')
             router.push('/')
         },
