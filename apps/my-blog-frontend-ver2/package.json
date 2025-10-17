@@ -9,12 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@my-blog/types": "workspace:*",
     "@tanstack/react-query": "^5.90.3",
     "dotenv": "^17.2.3",
+    "lucide-react": "^0.546.0",
     "next": "15.5.5",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "@my-blog/types": "workspace:*"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

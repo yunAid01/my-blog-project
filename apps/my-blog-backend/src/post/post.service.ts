@@ -13,17 +13,14 @@ export class PostService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 'create' 메서드: 새로운 게시글을 생성하는 기능을 담당합니다.
-  create(createPostDto: CreatePostDto, userId: number) {
-    // 2. 셰프가 주문서(DTO)를 받고, 식자재 공급팀(prisma)에게 재료를 창고에 넣어달라고 요청합니다.
-    // this.prisma.post.create()는 새로운 Post 레코드를 생성하는 Prisma의 메서드입니다.
-    // 'data' 필드에 DTO를 그대로 전달하면, Prisma가 DTO의 필드('title', 'content')와
-    // Post 모델의 필드를 자동으로 매칭해서 데이터를 삽입해줍니다.
-    return this.prisma.post.create({
+  async create(createPostDto: CreatePostDto, userId: number) {
+    const newPost = await this.prisma.post.create({
       data: {
         ...createPostDto,
         authorId: userId
       }
     });
+    return newPost
   }
 
   // 'findAll' 메서드: 모든 게시글을 조회하는 기능을 담당합니다.
@@ -33,6 +30,9 @@ export class PostService {
     // .findMany()는 해당 모델의 모든 레코드(데이터)를 배열 형태로 반환하는 Prisma의 강력한 메서드입니다.
     // (이 코드는 SQL의 'SELECT * FROM Post;' 와 동일한 작업을 수행합니다.)
     return this.prisma.post.findMany({
+      orderBy: {
+        createdAt: 'desc' // 최신순으로 정렬
+      },
       include: {
         likes: true,
         author: {
@@ -43,6 +43,9 @@ export class PostService {
           }
         },
         comments: {
+          orderBy: {
+            createdAt: 'desc'
+          },
           include: {
             author: {
               select: {
@@ -55,6 +58,16 @@ export class PostService {
         }
       }
     });
+  }
+
+  // findOneForEdit
+  async findOneForEdit(postId: number) {
+    const originalPost = await this.prisma.post.findUnique({
+      where: {
+        id: postId
+      }
+    })
+    return originalPost
   }
 
   // 'findOne' 메서드: id가 일치하는 게시글 하나만 찾는 기능을 담당합니다.
@@ -71,6 +84,9 @@ export class PostService {
           }
         },
         comments: {
+          orderBy: {
+            createdAt: 'desc' // 최신순으로 정렬
+          },
           include: {
             author: {
               select: {
@@ -86,12 +102,16 @@ export class PostService {
     if (!findOnePost) {
       throw new NotFoundException('해당하는 포스트가 없습니다.');
     }
+    console.log(findOnePost);
     return findOnePost;
   }
 
   // 내가 쓴 글만 찾는 메서드입니다.
   findMyPosts(userId: number) {
     return this.prisma.post.findMany({
+      orderBy: {
+        createdAt: 'desc' // 최신순으로 정렬
+      },
       where: {
         authorId: userId,
       },
@@ -109,16 +129,18 @@ export class PostService {
   }
 
   // 'update' 메서드: id가 일치하는 게시글의 내용을 수정합니다.
-  update(id: number, updatePostDto: UpdatePostDto) {
+  async update(postId: number, updatePostDto: UpdatePostDto) {
     // 셰프가 '1번 메뉴 수정 요청서'를 받고, 공급팀에게 창고의 재료를 업데이트하라고 지시합니다.
     // this.prisma.post.update()는 기존 레코드를 수정하는 Prisma의 메서드입니다.
-    return this.prisma.post.update({
+    const updatePost = await this.prisma.post.update({
       // where: 어떤 레코드를 수정할지 고유한 id로 지정합니다.
-      where: { id },
+      where: { id: postId },
       // data: 어떤 내용으로 수정할지 DTO를 전달합니다.
       // DTO에 title만 있으면 title만, content만 있으면 content만 업데이트됩니다.
       data: updatePostDto,
     });
+    console.log(updatePost)
+    return updatePost
   }
 
   // 'remove' 메서드: id가 일치하는 게시글을 삭제합니다.

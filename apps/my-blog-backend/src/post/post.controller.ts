@@ -41,14 +41,17 @@ export class PostController {
   // @Get(':id') 데코레이터는 '/posts/' 뒤에 오는 동적인 값(:id)을 처리합니다.
   // 예를 들어, /posts/1, /posts/abc 등의 요청이 모두 이 핸들러로 들어옵니다.
   @Get(':id')
-  // @Param('id')는 URL의 :id 부분에 들어온 값을 id라는 이름의 파라미터로 받겠다는 의미입니다.
-  // URL에서 받은 id는 기본적으로 문자열(string) 타입입니다.
   findOne(@Param('id') id: string) {
     // 홀 매니저가 손님의 '1번 메뉴' 주문을 받고, 셰프에게 전달합니다.
     // 데이터베이스의 id는 숫자 타입이므로, '+'를 붙여 문자열 id를 숫자(number)로 변환해줍니다.
     return this.postService.findOne(+id);
   }
-  
+  @Get(':id/edit')
+  @UseGuards(AuthGuard('jwt'))
+  findOneForEdit(@Param('id') postId: string) {
+    return this.postService.findOneForEdit(+postId) 
+  }
+
   // 'GET /posts/my' 라는 새로운 경로입니다.
   // 이 부분이 아마 누락되었을 수 있습니다.
   @Get('/my')
@@ -58,12 +61,13 @@ export class PostController {
   }
 
   // @Patch(':id') 데코레이터는 HTTP PATCH 요청을 처리하며, 특정 리소스를 수정함을 의미합니다.
-  @Patch(':id')
+  @Patch(':id/edit')
   // @Param으로 어떤 게시글을 수정할지 id를, @Body로 어떤 내용으로 수정할지 DTO를 함께 받습니다.
   @UseGuards(AuthGuard('jwt')) // 당연히 로그인이 필요합니다.
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  async update(@Param('id') postId: string, @Body() updatePostDto: UpdatePostDto) {
     // 2. 홀 매니저가 손님의 '1번 메뉴 수정 요청서'를 셰프에게 전달합니다.
-    return this.postService.update(+id, updatePostDto);
+    const updatedPost = await this.postService.update(+postId, updatePostDto);
+    return updatedPost
   }
 
   // @Delete(':id') 데코레이터는 HTTP DELETE 요청을 처리합니다.

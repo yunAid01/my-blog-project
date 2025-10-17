@@ -3,68 +3,33 @@
 // 'use client' 오타를 수정했어요. 'clients'가 아니라 'client'입니다!
 'use client'; 
 
-import type { Post } from "@/types";
-import CommentCard from "./CommentCard";
+import type { GetPostReturn } from "@my-blog/types";
 import Link from "next/link";
 import LikeButton from "./LikeButton";
 import CommentForm from "./CommentForm";
 import React, { useState } from "react";
 import { timeAgo } from "@/lib/time"; // 작성날짜 관련
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createLike, deleteLike } from "@/api/like";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from 'next/navigation';
+import { MoreVertical, Edit, Trash2 } from 'lucide-react'; // ✅ 아이콘 추가
+import PostConfig from "./PostConfig";
+
 
 
 interface PostCardProps {
-    post: Post;
+    post: GetPostReturn;
 }
 
 export default function PostCard({ post }: PostCardProps) {
     const router = useRouter()
-
-
+    const queryClinet = useQueryClient()  
     const {
-        data: user
+        data: loginUser
     } =useUser()
-    const [likeCount, setLikeCount] = useState(post.likes.length);
-    const isLiked = post.likes.some(like => like.userId === user?.id);
-    // 좋아요 관련 로직
-    const queryClinet = useQueryClient()
+
+    // postmenu open
     
-    const {
-        mutate: toggleLikeAction,
-        isPending
-    } = useMutation({
-        mutationFn: isLiked ? deleteLike : createLike,
-        onSuccess: () => {
-            console.log('성공적으로 좋아요가 실행되었습니다')
-            queryClinet.invalidateQueries({ queryKey: ['posts']})   
-        },
-        onError: (error) => {
-            console.error(`에러 발생${error.message}`)
-            alert(`에러 발생 : ${error.message}`)
-        }
-    })
-
-    // handlel
-    const handleLikeClick = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!user) {
-            alert('로그인이 필요합니다..')
-            router.push('/login')
-        }
-        if (isLiked) { 
-            // 좋아요 취소기능
-            setLikeCount(prev => prev - 1)
-            toggleLikeAction(post.id)
-        } else {
-            // 좋아요 추가기능
-            setLikeCount(prev => prev + 1)
-            toggleLikeAction(post.id)
-        }
-    }
-
     return (
         // 전체 카드를 감싸는 컨테이너
         // max-w-xl: 최대 너비 지정 (너무 넓어지지 않게)
@@ -88,12 +53,10 @@ export default function PostCard({ post }: PostCardProps) {
                     </Link>
                 </div>
                 
-                {/* 더보기 버튼 (오른쪽 끝으로) */}
-                <button className="ml-auto text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                    </svg>
-                </button>
+                <div className="ml-auto relative">
+                    {/* 설정창 => 게시글 수정 및 삭제 */} 
+                    <PostConfig postAuthorId={post.author.id} postId={post.id} />        
+                </div>
             </div>
 
             {/* 2. 게시물 본문 (이미지가 있다면 여기에 넣으면 좋아요) */}
@@ -105,32 +68,10 @@ export default function PostCard({ post }: PostCardProps) {
                 </Link>
             </div>
             
-            
             {/* 3. 액션 버튼: 좋아요, 댓글 */}
             <div className="px-4 flex items-center space-x-4">
                 {/* 좋아요 버튼 */}
-                <button onClick={handleLikeClick} disabled={isPending}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        // 1. className을 isLiked 값에 따라 동적으로 변경합니다.
-                        className={`h-6 w-6 transition ${
-                            isLiked
-                                ? 'text-red-500' // isLiked가 true이면, 하트 색을 빨간색으로
-                                : 'text-gray-700 hover:text-red-500' // false이면, 회색(마우스 올리면 빨간색)으로
-                        }`}
-                        // 2. fill 속성도 isLiked 값에 따라 동적으로 변경합니다.
-                        fill={isLiked ? 'currentColor' : 'none'} // isLiked가 true이면, 내부를 현재 색(빨간색)으로 채웁니다.
-                        viewBox="0 0 24 24"
-                        stroke="currentColor" // stroke 색상은 className의 text 색상을 따라갑니다.
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.672l1.318-1.354a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
-                        />
-                    </svg>
-                </button>
+                <LikeButton post={post} /> 
                 
                 {/* 댓글 버튼 */}
                 <Link href={`/posts/${post.id}`}>
@@ -145,7 +86,7 @@ export default function PostCard({ post }: PostCardProps) {
             {/* 4. 좋아요 개수 */}
             <div className="px-4 py-2">
                 <p className="font-bold text-sm text-gray-800">
-                    좋아요 {likeCount}개
+                    좋아요 {post.likes.length}개
                 </p>    
             </div>
             

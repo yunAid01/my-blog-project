@@ -7,16 +7,17 @@ import Link from 'next/link';
 
 // API 함수들
 import { getPostById } from '@/api/posts';
-import { createLike, deleteLike } from '@/api/like';
 
 // 컴포넌트들
 import CommentCard from '@/components/CommentCard';
 import CommentForm from '@/components/CommentForm';
+import LikeButton from '@/components/LikeButton';
 
 // 훅과 유틸리티 함수
 import { useUser } from '@/hooks/useUser';
 import { timeAgo } from '@/lib/time';
-import type { Post } from '@/types';
+import type { GetPostReturn } from '@my-blog/types';
+import PostConfig from '@/components/PostConfig';
 
 
 export default function PostDetailPage() {
@@ -33,36 +34,13 @@ export default function PostDetailPage() {
         isLoading, 
         isError, 
         error 
-    } = useQuery<Post>({
+    } = useQuery<GetPostReturn>({
         queryKey: ['post', postId],
         queryFn: () => getPostById(postId),
         enabled: !!postId,
     });
     
-    // 이 페이지 내부에서만 사용할 상태와 로직들
-    const isLiked = post?.likes.some((like) => like.userId === user?.id);
-    
-    // 2. 좋아요 기능 로직
-    const { mutate: toggleLikeAction, isPending: isLikePending } = useMutation({
-        mutationFn: isLiked ? deleteLike : createLike,
-        onSuccess: () => {
-            // 성공 시, 'post' 데이터와 'posts' 목록 데이터 모두를 최신화하라고 알려줍니다.
-            queryClient.invalidateQueries({ queryKey: ['post', postId] });
-            queryClient.invalidateQueries({ queryKey: ['posts'] });
-        },  
-        onError: (error) => {
-            alert(`에러: ${error.message}`);
-        },
-    });
 
-    const handleLikeClick = () => {
-        if (!user) {
-            alert("로그인이 필요합니다.");
-            router.push('/login');
-            return;
-        }
-        toggleLikeAction(postId);
-    };
 
     // 3. 로딩 및 에러 상태 처리
     if (isLoading) {
@@ -73,7 +51,7 @@ export default function PostDetailPage() {
         return <div className="text-center mt-20 text-red-500">오류 발생: {error.message}</div>;
     }
 
-    if (!post) {
+    if (!post || !post.author) {
         return <div className="text-center mt-20">게시물이 존재하지 않습니다.</div>;
     }
 
@@ -97,6 +75,9 @@ export default function PostDetailPage() {
                                     <Link href={`/user/${post.author.id}`} className="font-bold text-sm hover:underline">
                                         {post.author.nickname}
                                     </Link>
+                                </div>
+                                <div className='ml-50'>
+                                    <PostConfig postAuthorId={post.author.id} postId={post.id}/>
                                 </div>
                             </div>
                         </div>
@@ -124,12 +105,7 @@ export default function PostDetailPage() {
                         {/* 하단 액션 영역 */}
                         <div className="p-4 border-t">
                             <div className="flex items-center space-x-4">
-                                <button onClick={handleLikeClick} disabled={isLikePending}>
-                                    <svg className={`h-6 w-6 transition ${isLiked ? "text-red-500" : "text-gray-700 hover:text-red-500"}`} fill={isLiked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.672l1.318-1.354a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
-                                    </svg>
-                                </button>
-                                {/* 다른 아이콘 추가 가능 */}
+                                <LikeButton post={post}/>
                             </div>
                             <p className="font-bold text-sm mt-2">좋아요 {post.likes.length}개</p>
                             <p className="text-xs text-gray-500 mt-1">{timeAgo(post.createdAt)}</p>

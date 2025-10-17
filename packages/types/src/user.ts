@@ -1,46 +1,83 @@
-export interface userGetMe {
-    id: number;
+
+import type { Post } from "@prisma/client";
+
+export interface PublicUser {
     email: string;
     nickname: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
+    id: number;
+}
+export interface LoginReturn {
+    message: string;
+    accessToken: string;
+    user: PublicUser
 }
 
-export interface GetUserWithAllData {
-    id: number;
+export interface GetUserForProfileReturn {
+    id: number; //userId
     nickname: string;
     email: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     posts: {
-        id: number;
+        id: number; //postId
+        createdAt: Date;
+        updatedAt: Date;
         title: string;
-        content: string;
-        createdAt: string;
-        updatedAt: string;
+        content: string | null;
         authorId: number;
         author: {
             id: string;
             email: string;
             nickname: string;
         }
-    }[],
+        likes: {
+            postId: number;
+            userId: number;
+        }[] | [],
+        comments: {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            authorId: number;
+            text: string;
+            postId: number;
+        }[] | [];
+    }[] | [];
+    likes: {
+        userId: number,
+        postId: number,
+        post: {
+            id: number; //postId
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            content: string | null;
+            authorId: number;
+            author: {
+                id: number;
+                nickname: string;
+                email: string;
+            }
+        }
+    }
     followers: {
         followingId: number;
-        follwerId: number;
+        followerId: number;
         follower: {
             id: number;
             email: string;
             nickname: string;
         }
-    }[],
+    }[] | [],
     followings: {
         followingId: number;
-        follwerId: number;
+        followerId: number;
         following: {
             id: number;
             email: string;
             nickname: string;
         }
-    }[]
+    }[] | [],
 }

@@ -1,10 +1,10 @@
 // src/api.auth.ts
 
 // 유저 등록 api
-import type { CreateUserDto, LoginUserDto } from "@/types"
-import type { userGetMe } from "@/types";
+import type { CreateUserDto, LoginUserDto } from "@my-blog/types"
+import type { PublicUser, LoginReturn } from "@my-blog/types";
 
-export const userRegister = async (registerData: CreateUserDto): Promise<any> => {
+export const userRegister = async (registerData: CreateUserDto): Promise<PublicUser> => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${API_URL}/user`, {
         method: 'POST',
@@ -23,18 +23,7 @@ export const userRegister = async (registerData: CreateUserDto): Promise<any> =>
 }
 
 // 6. 생성된 출입증을 반환합니다.
-interface LoginResult {
-    message: string;
-    accessToken: string;
-    user: {
-        id: number;
-        email: string;
-        nickname: string;
-        createdAt: string;
-        updatedAt: string;
-    }
-}
-export const userLogin = async (loginData: LoginUserDto): Promise<LoginResult> => {
+export const userLogin = async (loginData: LoginUserDto): Promise<LoginReturn> => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${API_URL}/user/login`, {
         method: 'POST',
@@ -58,7 +47,7 @@ export const userLogin = async (loginData: LoginUserDto): Promise<LoginResult> =
 }
 
 // 로그인 정보 전역관리
-export const getMe = async (): Promise<userGetMe | null> => {
+export const getMe = async (): Promise<PublicUser | null> => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const userId = localStorage.getItem('user-id');
     const token = localStorage.getItem('jwt-token');
@@ -77,6 +66,6 @@ export const getMe = async (): Promise<userGetMe | null> => {
         localStorage.removeItem('user-id')
         throw new Error('사용자 정보를 가져오는데 실패했습니다.');
     }
-    console.log(response);
+    console.log(`get me success: ${response}`);
     return response.json();
 }

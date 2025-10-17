@@ -1,9 +1,10 @@
 //src/app/page.tsx
 'use client';
 
-import type { Post } from "@/types";
+import type { GetPostReturn, GetUserForProfileReturn } from "@my-blog/types";
 import { getPosts } from "@/api/posts";
 import { useQuery } from '@tanstack/react-query';
+import { useUser } from "@/hooks/useUser";
 
 // components
 import PostCard from "@/components/PostCard";
@@ -14,7 +15,7 @@ export default function Home() {
     isLoading,
     isError,
     error,
-  } = useQuery<Post[]>({
+  } = useQuery<GetPostReturn[]>({
     queryKey: ['posts'], // 이 데이터의 고유한 키. 이 키로 캐싱됩니다.
     queryFn: getPosts,   // 데이터를 가져올 함수
   });

@@ -32,7 +32,7 @@ export class FollowService {
           followingId: followingId
         }
       });
-      return { message: '팔로우를 성공했습니다 !! 축하드립니다 야호 레츠고 꾸익 딴따리따따' };
+      return { message: '팔로우 성공' };
     } catch (error) {
       console.error(error);
       throw new NotFoundException('존재하지 않는 사용자입니다.');
@@ -66,7 +66,7 @@ export class FollowService {
           }
         }
       });
-      return { message: '언팔로우를 성공했습니다 !! 축하드립니다 야호 레츠고 꾸익 딴따리따따' };
+      return { message: '언팔로우 성공' };
     } catch (error) {
       console.error(error);
       throw new NotFoundException('존재하지 않는 사용자입니다.');

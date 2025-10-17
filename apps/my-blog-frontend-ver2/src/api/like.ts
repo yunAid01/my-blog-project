@@ -1,9 +1,9 @@
-interface result {
-    message: string;
-}
 
 // createLike
 // 포스터에 좋아요를 성공적으로 눌렀습니다.
+interface result {
+    message: string;
+}
 export const createLike = async (postId: number): Promise<result> => {
     const API_URL  = process.env.NEXT_PUBLIC_API_URL 
     const token = localStorage.getItem('jwt-token');

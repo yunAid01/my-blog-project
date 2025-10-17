@@ -1,5 +1,5 @@
 // create comment
-import type { CreateCommentDto } from "@/types";
+import type { CreateCommentDto } from "@my-blog/types";
 export const createComment = async ({ postId, text }: { postId: number, text: string } ) => {
     const token = localStorage.getItem('jwt-token');
     if (!token) {

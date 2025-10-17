@@ -1,6 +1,6 @@
-import type { GetUserWithAllData } from "@/types";
+import type { GetUserForProfileReturn } from "@my-blog/types";
 
-export const getUserWithAllData = async (userId: number): Promise<GetUserWithAllData> => {
+export const getUserForProfile = async (userId: number): Promise<GetUserForProfileReturn> => {
     const API_URL=process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${API_URL}/user/${userId}`)
 

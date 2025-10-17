@@ -23,7 +23,6 @@ export default function CommentForm ({ postId }: CommentFormProps) {
 
             // ✅ 1. 상세 페이지의 데이터를 무효화합니다.
             queryClient.invalidateQueries({ queryKey: ['post', postId] });
-            
             // ✅ 2. 메인 페이지의 전체 게시물 목록 데이터도 무효화합니다.
             queryClient.invalidateQueries({ queryKey: ['posts'] });
             setText('');
