@@ -1,6 +1,13 @@
 
 import type { Post } from "@prisma/client";
 
+export interface UpdateUserData {
+    email?: string;
+    nickname?: string;
+    password?: string;
+}
+
+
 export interface PublicUser {
     email: string;
     nickname: string;

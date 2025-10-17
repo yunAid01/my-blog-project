@@ -8,6 +8,11 @@ import PostGridItem from "@/components/PostGridItem"
 import { useUser } from "@/hooks/useUser" //login
 import { createFollow, deleteFollow } from "@/api/follow"
 import React from "react"
+import { useState } from "react"
+import ProfileEditModal from '@/components/ProfileEditModal'; // ✅ 곧 만들 모달 컴포넌트
+
+// ✅ 설정 아이콘 임포트
+import { Settings } from 'lucide-react';
 
 export default function UserPage() {
     const queryClient = useQueryClient()
@@ -43,6 +48,14 @@ export default function UserPage() {
             alert(`에러 발생 : ${error.message}`)
         }
     });
+
+     // ✅ 메뉴와 모달의 열림 상태를 관리합니다.
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    // ✅ 내 프로필인지 확인합니다.
+    const isMyProfile = loginUser?.id === userForProfile?.id;
+
+
     if (isLoading) {
         return <div className="text-center mt-20">프로필을 불러오는 중...</div>;
     }
@@ -89,8 +102,35 @@ export default function UserPage() {
                                 </button>
                             )
                         )}
+                        {isMyProfile && (
+                             // 1. 바로 이 div가 '닻'입니다. (position: relative)
+                            <div className="relative"> 
+                                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-1 rounded-full hover:bg-gray-200">
+                                    <Settings size={24} />
+                                </button>
+            
+                            {/* 2. isMenuOpen이 true일 때 나타나는 '배'입니다. (position: absolute) */}
+                            {isMenuOpen && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 border">
+                                    <ul onMouseLeave={() => setIsMenuOpen(false)}>
+                                        <li>
+                                            <button 
+                                                onClick={() => {
+                                                setIsEditModalOpen(true);
+                                                setIsMenuOpen(false);
+                                                }}
+                                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            >
+                                                프로필 수정
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
+                            </div>
+                        )}
                     </div>
-
+                
                     {/* 통계 정보 */}
                     <div className="flex justify-center sm:justify-start space-x-8 mb-4">
                         <div><span className="font-semibold">{userForProfile.posts.length}</span> 게시물</div>
@@ -109,9 +149,9 @@ export default function UserPage() {
             {/* 탭 메뉴 */}
             <div className="border-t border-gray-300">
                 <div className="flex justify-center space-x-12">
-                    <button className="py-3 border-t-2 border-black -mt-px font-semibold text-sm tracking-widest text-gray-800">게시물</button>
-                    <button className="py-3 text-sm font-semibold tracking-widest text-gray-400">저장됨</button>
-                    <button className="py-3 text-sm font-semibold tracking-widest text-gray-400">태그됨</button>
+                    <button className="py-3 border-t-2 border-black -mt-px font-semibold text-sm tracking-widest text-gray-800">MY 게시물</button>
+                    <button className="py-3 text-sm font-semibold tracking-widest text-gray-400">MY 좋아요</button>
+                    <button className="py-3 text-sm font-semibold tracking-widest text-gray-400">MY 저장됨</button>
                 </div>
             </div>
 
@@ -127,6 +167,14 @@ export default function UserPage() {
                     </div>
                 )}
             </div>
+
+            {/* ✅ 수정 모달: isEditModalOpen이 true일 때만 나타납니다. */}
+            {isMyProfile && isEditModalOpen && (
+                <ProfileEditModal 
+                    user={userForProfile} 
+                    onClose={() => setIsEditModalOpen(false)} 
+                />
+            )}
         </main>
     )
 }

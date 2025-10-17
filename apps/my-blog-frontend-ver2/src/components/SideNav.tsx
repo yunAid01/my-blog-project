@@ -62,7 +62,7 @@ export default function SideNav() {
                             ) : loginUser ? (
                                 <div className="flex flex-col space-y-2">
                                     <Link href={`/user/${loginUser.id}`}>
-                                        <span className='text-center'>환영합니다, {loginUser.nickname}님!</span>
+                                        <span className='text-center'>My profile : {loginUser.nickname}</span>
                                     </Link>
                                     <button
                                         onClick={handleLogout}
