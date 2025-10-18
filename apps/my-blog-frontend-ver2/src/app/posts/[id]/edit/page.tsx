@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react" 
-import { Post, UpdatePostData } from "@my-blog/types"
+import { UpdatePostData } from "@my-blog/types"
 import { getPostForEdit, updatePost } from "@/api/posts"
 import { useParams, useRouter } from "next/navigation"
 
@@ -19,7 +19,8 @@ export default function PostEditPage () {
         isLoading,
         isError,
         error,
-    } = useQuery<Post>({
+        // 수정해라
+    } = useQuery<any>({
         queryKey: ['post', postId],
         queryFn: () => getPostForEdit(postId),
         enabled: !!postId,
