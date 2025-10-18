@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query"
 import { deletePost } from "@/api/posts"
 import { useQueryClient } from "@tanstack/react-query"
 import { useRouter } from 'next/navigation';
-import { Edit, MoreVertical, Trash2, ArrowLeft } from "lucide-react"
+import { Edit, MoreVertical, Trash2 } from "lucide-react"
 
 
 interface PostConfigProps {

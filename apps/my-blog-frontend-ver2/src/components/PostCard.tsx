@@ -12,7 +12,6 @@ import { timeAgo } from "@/lib/time"; // 작성날짜 관련
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from 'next/navigation';
-import { MoreVertical, Edit, Trash2 } from 'lucide-react'; // ✅ 아이콘 추가
 import PostConfig from "./PostConfig";
 
 

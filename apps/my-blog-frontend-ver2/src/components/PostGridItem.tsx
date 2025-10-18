@@ -1,5 +1,4 @@
 // src/components/PostGridItem.tsx
-import type { Post } from '@my-blog/types';
 import Link from 'next/link';
 
 interface PostGridItemProps {

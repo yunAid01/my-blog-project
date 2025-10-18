@@ -3,12 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { GetUserForProfileReturn, UpdateUserData } from '@my-blog/types';
+import type { UserForProfile, UpdateUserData } from '@my-blog/types';
 import { updateUserProfile } from '@/api/user';
 import { X } from 'lucide-react';
 
 interface ProfileEditModalProps {
-    user: GetUserForProfileReturn
+    user: UserForProfile
     onClose: () => void;
 }
 export default function ProfileEditModal({ user, onClose }: ProfileEditModalProps) {

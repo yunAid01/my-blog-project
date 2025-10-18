@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useUser } from '@/hooks/useUser'; // 우리가 만든 훅!
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter, usePathname } from 'next/navigation';
-import { Home, PlusSquare, Search, UserCircle } from 'lucide-react'; // 아이콘 라이브러리 (아래 설명 참조)
+import { Home, PlusSquare, Search } from 'lucide-react'; // 아이콘 라이브러리 (아래 설명 참조)
 
 export default function SideNav() {
     // useUser 훅을 호출해서 사용자 정보를 가져옵니다.

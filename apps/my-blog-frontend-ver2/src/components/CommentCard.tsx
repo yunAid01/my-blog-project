@@ -1,14 +1,22 @@
 // src/compoenents/CommentCard.tsx
 
-import type { Comment } from "@/types";
 // 날짜를 '방금 전' 등으로 예쁘게 보여주기 위해 timeAgo 함수를 가져옵니다.
 import { timeAgo } from "@/lib/time";
 import Link from "next/link";
 
 interface CommentCardProps {
-    comment: Comment;
+    comment: {
+        id: number;
+        text: string;
+        createdAt: string;
+        updatedAt: string;
+        author: {
+            id: number;
+            nickname: string;
+            email: string;
+        }
+    }
 }
-
 export default function CommentCard({ comment }: CommentCardProps) {
     return (
         // flex: 자식 요소들을 가로로 배치

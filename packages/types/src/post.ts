@@ -59,8 +59,8 @@ export interface GetPostReturn {
         nickname: string;
         email: string;
     };
-    comments: GetPostReturnComment[] | [];
-    likes: GetPostReturnLike[] | [];
+    comments: GetPostReturnComment[];
+    likes: GetPostReturnLike[];
 }
 
 
