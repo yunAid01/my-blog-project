@@ -6,7 +6,7 @@ import { useParams } from "next/navigation"
 import type { UserForProfile } from "@my-blog/types"
 import { useUser } from "@/hooks/useUser" //login
 import React from "react"
-import UserConfig from "@/components/FollowButton"
+import UserConfig from "@/components/UserConfig"
 import UserPostTab from "@/components/UserPostTab"
 
 
