@@ -1,8 +1,8 @@
-import type { GetUserForProfileReturn, PublicUser ,Post } from "@my-blog/types";
+import type { UserForProfile, PublicUser } from "@my-blog/types";
 import apiClient from "./client";
 
 // get user by id for profile
-export const getUserForProfile = async (userId: number): Promise<GetUserForProfileReturn> => {
+export const getUserForProfile = async (userId: number): Promise<UserForProfile> => {
     const API_URL=process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${API_URL}/user/${userId}`)
 

@@ -1,6 +1,6 @@
 // src/api/posts.ts
 
-import type { GetPostReturn, Post, UpdatePostData, CreatePostData } from "@my-blog/types";
+import type { GetPostReturn, UpdatePostData, CreatePostData } from "@my-blog/types";
 
 // get
 export const getPosts = async (): Promise<GetPostReturn[]>=> {
@@ -28,7 +28,7 @@ export const getPostById = async (postId: number): Promise<GetPostReturn> => {
 
 
 // post(create)
-export const createPost = async (newPost: CreatePostData): Promise<Post> => {
+export const createPost = async (newPost: CreatePostData) => {
     const API_URL  = process.env.NEXT_PUBLIC_API_URL;
     const token = localStorage.getItem('jwt-token');
     if (!token) {
@@ -52,7 +52,7 @@ export const createPost = async (newPost: CreatePostData): Promise<Post> => {
 }
 
 // 업데이트하기전에 그 해당 포스터의 데이터를 get으로 가져옴
-export const getPostForEdit = async (postId: number): Promise<Post> => {
+export const getPostForEdit = async (postId: number) => {
     const API_URL  = process.env.NEXT_PUBLIC_API_URL ;
     const token = localStorage.getItem('jwt-token');
     if (!token) {

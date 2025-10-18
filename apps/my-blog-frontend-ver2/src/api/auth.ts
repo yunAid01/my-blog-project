@@ -2,7 +2,7 @@
 
 // 유저 등록 api
 import type { CreateUserDto, LoginUserDto } from "@my-blog/types"
-import type { PublicUser, LoginReturn } from "@my-blog/types";
+import type { getMeUser, PublicUser, LoginReturn } from "@my-blog/types";
 
 export const userRegister = async (registerData: CreateUserDto): Promise<PublicUser> => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -47,7 +47,7 @@ export const userLogin = async (loginData: LoginUserDto): Promise<LoginReturn> =
 }
 
 // 로그인 정보 전역관리
-export const getMe = async (): Promise<PublicUser | null> => {
+export const getMe = async (): Promise<getMeUser | null> => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     const userId = localStorage.getItem('user-id');
     const token = localStorage.getItem('jwt-token');
