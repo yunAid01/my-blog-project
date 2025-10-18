@@ -1,6 +1,3 @@
-// 게시물의 타입도 정의해두면 좋습니다.
-import { Post } from "@prisma/client";
-// user post tab
 
 export interface UserTapComment {
     id: number;

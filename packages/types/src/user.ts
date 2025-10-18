@@ -1,6 +1,4 @@
 
-import type { Post } from "@prisma/client";
-
 export interface UpdateUserData {
     email?: string;
     nickname?: string;
