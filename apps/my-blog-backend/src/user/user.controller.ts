@@ -36,6 +36,21 @@ export class UserController {
     return this.userService.findMe(+userId);
   };
 
+  @Get(':id/posts')
+  findUserPosts(@Param('id') userId: string) {
+    return this.userService.findUserPosts(+userId);
+}
+
+  @Get(':id/likes')
+  findUserLikedPosts(@Param('id') userId: string) {
+    return this.userService.findUserLikedPosts(+userId);
+}
+
+  @Get(':id/saved')
+  findUserSavedPosts(@Param('id') userId: string) {
+    return this.userService.findUserSavedPosts(+userId);
+}
+
   @Get(':id')
   findOne(@Param('id') userId: string) {
     return this.userService.findUserWithAllData(+userId);

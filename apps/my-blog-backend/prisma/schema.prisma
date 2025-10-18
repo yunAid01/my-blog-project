@@ -30,6 +30,7 @@ model User {
   // 이 필드는 DB 테이블에는 존재하지 않지만, Prisma를 통해 user.posts 형태로 
   // 이 사용자가 쓴 모든 글에 쉽게 접근할 수 있게 해줍니다.
   posts     Post[]
+  savedPosts SavedPost[]
   comments  Comment[]
   likes     Like[]
 
@@ -82,8 +83,23 @@ model Post {
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
 
-  comments   Comment[]
-  likes      Like[]
+  savedBy   SavedPost[] // Post와 SavedPost 관계 추가
+  comments  Comment[]
+  likes     Like[]
+}
+
+// ==========================================
+//          Saved (저장됨) 모델
+// ==========================================
+model SavedPost {
+  @@id([userId, postId])
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
 }
 
 // ==========================================

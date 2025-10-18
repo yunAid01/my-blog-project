@@ -82,6 +82,56 @@ export class UserService {
     return userWithoutPassword;
   }
 
+  // ✅ 1.특정 유저의 모든 데이터를 가져옵니다 ..
+  async findUserPosts(userId: number) {
+    const userPosts = await this.prisma.post.findMany({
+      where: { authorId: userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        likes: true,
+        comments: true,
+      }
+    });
+    return userPosts
+  }
+
+  // ✅ 2. 특정 유저가 좋아요 누른 게시물만 가져오기
+  async findUserLikedPosts(userId: number) {
+    const likes = await this.prisma.like.findMany({
+      where: { userId: userId },
+      orderBy: { post: { createdAt: 'desc' } }, // 좋아요 누른 글의 최신순
+      include: {
+        post: {
+          include: {
+            likes: true,
+            comments: true
+          }
+        }
+      }
+    });
+    // 게시물 목록만 추출하여 반환
+    return likes.map((like) => like.post);
+  }
+
+  // ✅ 3. 특정 유저가 저장한 게시물만 가져오기
+  async findUserSavedPosts(userId: number) {
+    const savedPosts = await this.prisma.savedPost.findMany({
+      where: { userId: userId },
+      orderBy: { createdAt: 'desc' }, // 저장한 순서
+      include: {
+        post: {
+          include: {
+            likes: true,
+            comments: true
+          }
+        }
+      },
+    });
+    // 게시물 목록만 추출하여 반환
+    return savedPosts.map((save) => save.post);
+  }
+
+  
   // userProfilePage에서 사용할 유저 + 게시글 조회
   async findUserWithAllData(userId: number) {
     const findOneUser = await this.prisma.user.findUnique({

@@ -1,5 +1,5 @@
-import type { GetUserForProfileReturn, PublicUser } from "@my-blog/types";
-
+import type { GetUserForProfileReturn, PublicUser ,Post } from "@my-blog/types";
+import apiClient from "./client";
 
 // get user by id for profile
 export const getUserForProfile = async (userId: number): Promise<GetUserForProfileReturn> => {
@@ -13,6 +13,31 @@ export const getUserForProfile = async (userId: number): Promise<GetUserForProfi
     }
     return response.json()
 }
+
+// ✅ 1. 유저 게시물 가져오기
+export const getUserPosts = async (userId: number) => {
+  // (apiClient를 사용한다고 가정)
+    const response = await apiClient.get(`/user/${userId}/posts`);
+    console.log(response.data);
+    return response.data;
+}
+
+// ✅ 2. 유저가 좋아요 누른 글 가져오기
+export const getUserLikedPosts = async (userId: number) => {
+    const response = await apiClient.get(`/user/${userId}/likes`);
+    return response.data;
+}
+
+// ✅ 3. 유저가 저장한 글 가져오기
+export const getUserSavedPosts = async (userId: number) => {
+    const response = await apiClient.get(`/user/${userId}/saved`);
+    return response.data;
+}
+
+
+
+
+
 
 // update user by id
 interface updateUserProfileData {
