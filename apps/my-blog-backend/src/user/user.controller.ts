@@ -53,7 +53,7 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id') userId: string) {
-    return this.userService.findUserWithAllData(+userId);
+    return this.userService.findUserForProfile(+userId);
   }
 
   @Patch(':id')

@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -18,15 +17,13 @@ import { useUser } from '@/hooks/useUser';
 import { timeAgo } from '@/lib/time';
 import type { GetPostReturn } from '@my-blog/types';
 import PostConfig from '@/components/PostConfig';
+import { ArrowLeft } from 'lucide-react';
 
 
 export default function PostDetailPage() {
     const params = useParams();
     const router = useRouter();
-    const queryClient = useQueryClient();
     const postId = Number(params.id);
-
-    const { data: user } = useUser();
 
     // 1. 게시물 데이터 가져오기
     const { 
@@ -39,8 +36,6 @@ export default function PostDetailPage() {
         queryFn: () => getPostById(postId),
         enabled: !!postId,
     });
-    
-
 
     // 3. 로딩 및 에러 상태 처리
     if (isLoading) {
@@ -71,13 +66,18 @@ export default function PostDetailPage() {
                         <div className="p-4 border-b">
                             <div className="flex items-center">
                                 <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+
                                 <div className="ml-3">
                                     <Link href={`/user/${post.author.id}`} className="font-bold text-sm hover:underline">
                                         {post.author.nickname}
                                     </Link>
                                 </div>
-                                <div className='ml-50'>
+
+                                <div className='ml-auto flex items-center space-x-4'>
                                     <PostConfig postAuthorId={post.author.id} postId={post.id}/>
+                                    <button onClick={() => router.back()}>
+                                        <ArrowLeft />
+                                    </button>
                                 </div>
                             </div>
                         </div>

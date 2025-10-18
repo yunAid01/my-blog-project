@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { getUserForProfile } from "@/api/user"
 import { useParams } from "next/navigation"
-import type { GetUserForProfileReturn } from "@my-blog/types"
+import type { UserForProfile } from "@my-blog/types"
 import { useUser } from "@/hooks/useUser" //login
 import React from "react"
 import UserConfig from "@/components/FollowButton"
@@ -24,7 +24,7 @@ export default function UserPage() {
         isLoading: isUserLoading, // ✅ 유저 정보 로딩 (user)
         isError,
         error
-    } = useQuery<GetUserForProfileReturn>({
+    } = useQuery<UserForProfile>({
         queryKey: ['user', userId], // 이 데이터의 고유한 키. 이 키로 캐싱됩니다.
         queryFn: () => getUserForProfile(userId),   // 데이터를 가져올 함수
         enabled: !!userId,
@@ -57,7 +57,6 @@ export default function UserPage() {
                 
                     {/* 통계 정보 */}
                     <div className="flex justify-center sm:justify-start space-x-8 mb-4">
-                        <div><span className="font-semibold">{userForProfile.posts.length}</span> 게시물</div>
                         <div><span className="font-semibold">{userForProfile.followers.length}</span> 팔로워</div>
                         <div><span className="font-semibold">{userForProfile.followings.length}</span> 팔로잉</div>
                     </div>

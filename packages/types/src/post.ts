@@ -1,5 +1,29 @@
 // 게시물의 타입도 정의해두면 좋습니다.
+import { Post } from "@prisma/client";
+// user post tab
 
+export interface UserTapComment {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    postId: number;
+    authorId: number;
+    text: string;
+}
+export interface UserTapLike {
+    userId: number;
+    postId: number;
+}
+export interface UserTabPost {
+    id: number;
+    title: string;
+    content: string | null;
+    authorId: number;
+    createdAt: string;
+    updatedAt: string;
+    likes: UserTapLike[];
+    comments: UserTapComment[];
+}
 
 export interface CreateCommentDto {
     text: string;

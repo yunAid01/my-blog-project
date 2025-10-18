@@ -1,6 +1,5 @@
 import { createFollow, deleteFollow } from "@/api/follow";
-import { useUser } from "@/hooks/useUser";
-import { GetUserForProfileReturn, PublicUser } from "@my-blog/types";
+import { GetUserForProfileReturn, getMeUser } from "@my-blog/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 // ✅ 설정 아이콘 임포트
 import { Settings } from 'lucide-react';
@@ -10,7 +9,7 @@ import ProfileEditModal from "./ProfileEditModal";
 
 
 interface UserConfigProps {
-    loginUser: PublicUser | null | undefined
+    loginUser: getMeUser | null | undefined
     userForProfile: GetUserForProfileReturn
 }
 export default function UserConfig({ loginUser, userForProfile }: UserConfigProps) {

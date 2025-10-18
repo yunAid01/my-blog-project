@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { GetUserForProfileReturn, LoginReturn, PublicUser } from '@my-blog/types';
+import { getMeUser, LoginReturn, PublicUser, UserForProfile, UserTabPost } from '@my-blog/types';
+
+// utils
+import { mapPostToDto } from 'src/utils/isoStringMapper';
 
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt'; // 1. bcrypt를 import 합니다.
@@ -34,7 +37,11 @@ export class UserService {
       },
     });
     const { password: _, ...userWithoutPassword } = newUser;
-    return userWithoutPassword;
+    return {
+      ...userWithoutPassword,
+      createdAt: newUser.createdAt.toISOString(),
+      updatedAt: newUser.updatedAt.toISOString()
+    };
   }
 
   async login(loginUserDto: LoginUserDto): Promise<LoginReturn> {
@@ -58,8 +65,11 @@ export class UserService {
     return {
       message: '로그인 성공!',
       accessToken,
-      user: userWithoutPassword
-    };
+      user: {
+      ...userWithoutPassword,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString()
+    }};
   }
 
   // API 확인용
@@ -69,21 +79,22 @@ export class UserService {
   }
 
   // frontend => userGetMe method -> 로그인 데이터 유지
-  // controller api_url/user/:id/me
-  async findMe(userId: number): Promise<PublicUser> {
+  // controller API_URL]/user/:id/me
+  async findMe(userId: number): Promise<getMeUser> {
     const me = await this.prisma.user.findUnique({
       where: { id: userId }
     })
     if (!me) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }
-    const { password: _, ...userWithoutPassword } = me;
+    const { password: a , email: b, createdAt: c, updatedAt: d , ...getMeUser } = me;
     console.log(`getMe : ${me.id}`);
-    return userWithoutPassword;
+    return getMeUser;
   }
 
+  // user post tab
   // ✅ 1.특정 유저의 모든 데이터를 가져옵니다 ..
-  async findUserPosts(userId: number) {
+  async findUserPosts(userId: number): Promise<UserTabPost[]> {
     const userPosts = await this.prisma.post.findMany({
       where: { authorId: userId },
       orderBy: { createdAt: 'desc' },
@@ -92,11 +103,11 @@ export class UserService {
         comments: true,
       }
     });
-    return userPosts
+    return userPosts.map(mapPostToDto);
   }
 
   // ✅ 2. 특정 유저가 좋아요 누른 게시물만 가져오기
-  async findUserLikedPosts(userId: number) {
+  async findUserLikedPosts(userId: number): Promise<UserTabPost[]>{
     const likes = await this.prisma.like.findMany({
       where: { userId: userId },
       orderBy: { post: { createdAt: 'desc' } }, // 좋아요 누른 글의 최신순
@@ -110,12 +121,13 @@ export class UserService {
       }
     });
     // 게시물 목록만 추출하여 반환
-    return likes.map((like) => like.post);
+    const likedPosts = likes.map((like) => like.post);
+    return likedPosts.map(mapPostToDto)
   }
 
   // ✅ 3. 특정 유저가 저장한 게시물만 가져오기
-  async findUserSavedPosts(userId: number) {
-    const savedPosts = await this.prisma.savedPost.findMany({
+  async findUserSavedPosts(userId: number): Promise<UserTabPost[]> {
+    const saved = await this.prisma.savedPost.findMany({
       where: { userId: userId },
       orderBy: { createdAt: 'desc' }, // 저장한 순서
       include: {
@@ -128,31 +140,16 @@ export class UserService {
       },
     });
     // 게시물 목록만 추출하여 반환
-    return savedPosts.map((save) => save.post);
+    const savedPosts = saved.map((save) => save.post);
+    return savedPosts.map(mapPostToDto)
   }
 
   
   // userProfilePage에서 사용할 유저 + 게시글 조회
-  async findUserWithAllData(userId: number) {
+  async findUserForProfile(userId: number): Promise<UserForProfile> {
     const findOneUser = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
-        posts: {
-          orderBy: {
-            createdAt: 'desc' // 최신순으로 정렬
-          },
-          include: {
-            likes: true,
-            comments: true,
-            author: {
-              select: {
-                id: true,
-                email: true,
-                nickname: true
-              }
-            }
-          }
-        },
         // 날 팔로우 하는 사람
         followers: {
           where: {
@@ -183,31 +180,18 @@ export class UserService {
             }
           }
         },
-        likes: {
-          include: {
-            post: {
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    email: true,
-                    nickname: true
-                  }
-                }
-              }
-            }
-          }
-        }
-
       }
     });
-
     if (!findOneUser) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }
     const { password: _, ...userWithoutPassword } = findOneUser;
-    return userWithoutPassword;
-  }
+    return {
+      ...userWithoutPassword,
+      createdAt: findOneUser.createdAt.toISOString(),
+      updatedAt: findOneUser.updatedAt.toISOString(),
+    }
+  };
 
   // 유저정보 업그레이드
   // id = 업데이터하려는 유저의id , user.id = 현재 로그인한 유저의 id
@@ -226,7 +210,11 @@ export class UserService {
         data: updateUserDto,
       });
       const { password: _, ...userWithoutPassword } = updatedUser;
-      return userWithoutPassword;
+      return {
+        ...userWithoutPassword,
+        createdAt: updatedUser.createdAt.toISOString(),
+        updatedAt: updatedUser.updatedAt.toISOString()
+      };
     } catch (error) {
       console.error(error);
       throw new NotFoundException('유저 정보 수정에 실패했습니다.');

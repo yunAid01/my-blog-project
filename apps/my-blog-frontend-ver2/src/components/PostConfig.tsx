@@ -6,7 +6,8 @@ import { useMutation } from "@tanstack/react-query"
 import { deletePost } from "@/api/posts"
 import { useQueryClient } from "@tanstack/react-query"
 import { useRouter } from 'next/navigation';
-import { Edit, MoreVertical, Trash2 } from "lucide-react"
+import { Edit, MoreVertical, Trash2, ArrowLeft } from "lucide-react"
+
 
 interface PostConfigProps {
     postAuthorId: number;
@@ -55,6 +56,7 @@ export default function PostConfig ({ postAuthorId, postId }: PostConfigProps) {
             >
                 <MoreVertical size={20} />
             </button>
+            
             {/* 메뉴가 열렸을 때 보여줄 드롭다운 */}
             {isMyPost && isPostcardMemuOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-20"
