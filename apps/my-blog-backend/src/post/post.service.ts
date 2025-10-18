@@ -31,7 +31,7 @@ export class PostService {
     // (이 코드는 SQL의 'SELECT * FROM Post;' 와 동일한 작업을 수행합니다.)
     return this.prisma.post.findMany({
       orderBy: {
-        createdAt: 'desc' // 최신순으로 정렬
+        createdAt: 'desc' // 최신순
       },
       include: {
         likes: true,
