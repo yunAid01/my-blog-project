@@ -1,10 +1,9 @@
 //src/app/page.tsx
 'use client';
 
-import type { GetPostReturn, GetUserForProfileReturn } from "@my-blog/types";
+import type { GetPostReturn } from "@my-blog/types";
 import { getPosts } from "@/api/posts";
 import { useQuery } from '@tanstack/react-query';
-import { useUser } from "@/hooks/useUser";
 
 // components
 import PostCard from "@/components/PostCard";
