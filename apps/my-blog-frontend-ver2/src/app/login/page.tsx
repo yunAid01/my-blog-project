@@ -85,6 +85,10 @@ export default function LoginPage() {
                             로그인하기
                         </button>
                     </form>
+
+                    <button onClick={() => router.push('/register')}>
+                        회원가입
+                    </button>
                 </div>
             </div>
         </>
