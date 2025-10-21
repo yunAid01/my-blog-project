@@ -3,16 +3,18 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+import { Comment } from '@my-blog/types';
+
 @Injectable()
 export class CommentService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // 댓글 생성
+  /** creaet comment */
   async create(
     postId: number,
     createCommentDto: CreateCommentDto,
     userId: number
-  ) {
+  ): Promise<Comment> {
     const newComments = await this.prisma.comment.create({
       data: {
         text: createCommentDto.text,
@@ -20,7 +22,11 @@ export class CommentService {
         postId: postId,
       },
     });
-    return newComments;
+    return {
+      ...newComments,
+      createdAt: newComments.createdAt.toISOString(),
+      updatedAt: newComments.updatedAt.toISOString()
+    };
   }
 
   // 특정 게시글의 모든 댓글 조회
@@ -54,11 +60,13 @@ export class CommentService {
     return comment;
   }
 
-  async update(
+  // ----------------------------------------------------------- //
+  /** update comment */
+  async update (
     commentId: number,
     updateCommentDto: UpdateCommentDto,
     userId: number
-  ) { const willbeUpdatedComment = await this.prisma.comment.findUnique({
+  ): Promise<Comment> { const willbeUpdatedComment = await this.prisma.comment.findUnique({
       where: { id: commentId },
     });
     if (!willbeUpdatedComment) {
@@ -75,13 +83,19 @@ export class CommentService {
         data: {
           text: updateCommentDto.text,
         }});
-      return updatedComment;
+
+      return {
+        ...updatedComment,
+        createdAt: updatedComment.createdAt.toISOString(),
+        updatedAt: updatedComment.updatedAt.toDateString()
+      };
     } catch (error) {
       console.error(error)
       throw new Error('Failed to update comment');
     }
   }
 
+  // ----------------------------------------------------------- //
   async remove(commentId: number, userId: number) {
     const willbeDeletedComment = await this.prisma.comment.findUnique({
       where: { id: commentId },

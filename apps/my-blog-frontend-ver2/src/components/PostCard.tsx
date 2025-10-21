@@ -3,7 +3,7 @@
 // 'use client' 오타를 수정했어요. 'clients'가 아니라 'client'입니다!
 'use client'; 
 
-import type { GetPostReturn } from "@my-blog/types";
+import type { PostForMainPage } from "@my-blog/types";
 import Link from "next/link";
 import LikeButton from "./LikeButton";
 import CommentForm from "./CommentForm";
@@ -17,7 +17,7 @@ import PostConfig from "./PostConfig";
 
 
 interface PostCardProps {
-    post: GetPostReturn;
+    post: PostForMainPage;
 }
 
 export default function PostCard({ post }: PostCardProps) {
@@ -70,7 +70,7 @@ export default function PostCard({ post }: PostCardProps) {
             {/* 3. 액션 버튼: 좋아요, 댓글 */}
             <div className="px-4 flex items-center space-x-4">
                 {/* 좋아요 버튼 */}
-                <LikeButton post={post} /> 
+                <LikeButton postId={post.id} postLikes={post.likes}/> 
                 
                 {/* 댓글 버튼 */}
                 <Link href={`/posts/${post.id}`}>

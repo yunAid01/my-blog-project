@@ -79,6 +79,19 @@ export default function PostConfig ({ postAuthorId, postId }: PostConfigProps) {
                     </ul>
                 </div>
             )}
+            {!isMyPost && isPostcardMemuOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-20"
+                    onMouseLeave={() => setIsPostcardMenuOpen(false)}> 
+                    <ul className="py-1">
+                        <li>
+                            {/* onClick={() => 신고 로직} */}
+                            <button onClick={() => alert('신고가 접수되었습니다')} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <Edit size={16} /> 신고하기
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            )}
         </div>
     ) 
 }

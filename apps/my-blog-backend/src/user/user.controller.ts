@@ -51,7 +51,9 @@ export class UserController {
     return this.userService.findUserSavedPosts(+userId);
 }
 
+  
   @Get(':id')
+  /** user for profile */
   findOne(@Param('id') userId: string) {
     return this.userService.findUserForProfile(+userId);
   }

@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react" 
-import { UpdatePostData } from "@my-blog/types"
+import { Post, UpdatePostData } from "@my-blog/types"
 import { getPostForEdit, updatePost } from "@/api/posts"
 import { useParams, useRouter } from "next/navigation"
 
@@ -19,9 +19,8 @@ export default function PostEditPage () {
         isLoading,
         isError,
         error,
-        // 수정해라
-    } = useQuery<any>({
-        queryKey: ['post', postId],
+    } = useQuery<Post>({
+        queryKey: ['postForEdit', postId],
         queryFn: () => getPostForEdit(postId),
         enabled: !!postId,
     })
@@ -51,6 +50,7 @@ export default function PostEditPage () {
         },
         onError: (error) => {
             const errorData = error.message;
+            alert(`포스트 수정에 실패했습니다 : ${error.message}`)
             throw new Error(`포스트 수정 에러 : ${errorData}`)
         }
     })
@@ -61,16 +61,7 @@ export default function PostEditPage () {
             title: title,
             content: content
         }
-        try {
-            await updatePostAction({ postId, updatePostData });
-            await queryClient.invalidateQueries({ queryKey: ['post', postId] });
-            await queryClient.invalidateQueries({ queryKey: ['posts'] });
-            router.push(`/posts/${postId}`); // 절대 경로
-        } catch (error) {
-            console.error(error);
-            alert('수정 중 오류가 발생했습니다.');
-        }
-        
+        updatePostAction({ postId, updatePostData });
     };
 
     // getpost <- useQuery

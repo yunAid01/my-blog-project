@@ -1,6 +1,6 @@
 // yunaid01/my-blog-project/apps/my-blog-frontend-ver2/src/api/client.ts
 
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 // 1. 기본 설정으로 axios 인스턴스(객체)를 생성합니다.
 const apiClient = axios.create({
@@ -27,5 +27,27 @@ apiClient.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+/** 응답 인터셉터 (공통 에러처리 핵심) */
+apiClient.interceptors.response.use(
+    (response: AxiosResponse) => {
+        // [성공] 2xx 응답이 오면
+        return response.data;
+    },
+    (error: AxiosError) => {
+        console.error('API Error Occurred:', error);
+        if (error.response?.status === 401) {
+            console.log('인증 에러 ! 로그인이 필요합니다.')
+            alert('로그인이 필요합니다..')
+        }
+
+        const serverErrorMessage = (error.response?.data as { message?: string })?.message;
+        // UI단(React Query 등)으로 에러를 다시 던져줍니다.
+        // 이래야 컴포넌트에서 isError 상태를 알 수 있습니다.
+        return Promise.reject(
+            new Error(serverErrorMessage || '알 수 없는 에러가 발생했습니다.')
+        );
+    }
+)
 
 export default apiClient;

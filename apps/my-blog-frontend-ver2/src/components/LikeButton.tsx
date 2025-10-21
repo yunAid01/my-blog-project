@@ -1,33 +1,37 @@
 // src/compoenets/LikeButton.tsx
 'use client'
 
-import React, { useState } from "react";
+import React from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createLike, deleteLike } from "@/api/like";
 import { useUser } from "@/hooks/useUser";
-import { GetPostReturn } from "@my-blog/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
 
 interface LikeButtonProps {
-    post: GetPostReturn
+    postId: number;
+    postLikes: {
+        userId: number;
+        postId: number;
+    }[];
 }
 
-export default function LikeButton ({ post }: LikeButtonProps) {
+export default function LikeButton ({ postId, postLikes }: LikeButtonProps) {
     const router = useRouter();
     const queryClient = useQueryClient();
 
     const {
         data: loginUser
-    } =useUser()
-    const isLiked = post.likes.some(like => like.userId === loginUser?.id);    
+    } =useUser() //login user 확인
+
+    const isLiked = postLikes.some(like => like.userId === loginUser?.id);    
     const {
         mutate: toggleLikeAction,
         isPending
     } = useMutation({
         mutationFn: isLiked ? deleteLike : createLike,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['post', post.id] });
+            queryClient.invalidateQueries({ queryKey: ['post', postId] });
             queryClient.invalidateQueries({ queryKey: ['posts']});
         },
         onError: (error) => {
@@ -42,7 +46,7 @@ export default function LikeButton ({ post }: LikeButtonProps) {
             alert('로그인이 필요합니다..')
             router.push('/login')
         }
-        toggleLikeAction(post.id)
+        toggleLikeAction(postId)
     };
 
     return (

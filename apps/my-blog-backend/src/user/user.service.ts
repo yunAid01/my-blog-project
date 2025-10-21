@@ -66,10 +66,11 @@ export class UserService {
       message: '로그인 성공!',
       accessToken,
       user: {
-      ...userWithoutPassword,
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString()
-    }};
+        ...userWithoutPassword,
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString()
+      }
+    };
   }
 
   // API 확인용

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 // ✅ 설정 아이콘 임포트
 import { Settings } from 'lucide-react';
 import { useState } from "react";
-import ProfileEditModal from "./ProfileEditModal";
+import ProfileEditModal from "./Modal/ProfileEditModal";
 
 
 

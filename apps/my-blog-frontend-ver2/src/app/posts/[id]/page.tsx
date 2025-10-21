@@ -74,7 +74,9 @@ export default function PostDetailPage() {
                                 </div>
 
                                 <div className='ml-auto flex items-center space-x-4'>
+                                    {/* post config */}
                                     <PostConfig postAuthorId={post.author.id} postId={post.id}/>
+                                    
                                     <button onClick={() => router.back()}>
                                         <ArrowLeft />
                                     </button>
@@ -105,7 +107,7 @@ export default function PostDetailPage() {
                         {/* 하단 액션 영역 */}
                         <div className="p-4 border-t">
                             <div className="flex items-center space-x-4">
-                                <LikeButton post={post}/>
+                                <LikeButton postId={post.id} postLikes={post.likes}/>
                             </div>
                             <p className="font-bold text-sm mt-2">좋아요 {post.likes.length}개</p>
                             <p className="text-xs text-gray-500 mt-1">{timeAgo(post.createdAt)}</p>

@@ -29,6 +29,7 @@ export default function LoginPage() {
         },
         onError: (error) => {
             console.error(`로그인 에러 : ${error}`)
+            alert(`로그인 에러 : ${error?.message}`)
         }
     })
 

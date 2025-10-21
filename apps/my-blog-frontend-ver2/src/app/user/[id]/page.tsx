@@ -13,10 +13,8 @@ import UserPostTab from "@/components/UserPostTab"
 
 export default function UserPage() {
     const params = useParams();
-    const userId = Number(params.id); // getUserForProfile
+    const userId: number = Number(params.id); // getUserForProfile
     const { data: loginUser } = useUser();
-
-    
 
     // user 쿼리
     const {

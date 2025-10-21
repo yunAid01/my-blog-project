@@ -3,6 +3,7 @@ import PostGridItem from "@/components/PostGridItem"
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserPosts, getUserLikedPosts, getUserSavedPosts } from "@/api/user"
+import { UserTabPost } from "@my-blog/types";
 
 
 interface UserPostTabProps {
@@ -16,7 +17,7 @@ export default function UserPostTab ({ userId }: UserPostTabProps) {
     const {
         data: tabData,
         isLoading: isTabLoading // ✅ 탭 콘텐츠용 로딩 (posts)
-    } = useQuery<any[]>({
+    } = useQuery<UserTabPost[]>({
         // queryKey에 activeTab을 넣어, 탭이 바뀔 때마다 쿼리가 다시 실행되게 합니다.
         queryKey: ['userContent', userId, activeTab],
         queryFn: () => {

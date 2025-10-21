@@ -1,4 +1,14 @@
+export interface Post {
+    id:  number;
+    title: string;
+    content: string | null;
+    createdAt: string;
+    updatedAt: string;
+    authorId: number;
+}
 
+//-------------------------------------------------- // 
+// 유저페이지의 postTab 에 들어갈 타입
 export interface UserTapComment {
     id: number;
     createdAt: string;
@@ -11,6 +21,7 @@ export interface UserTapLike {
     userId: number;
     postId: number;
 }
+/** user page tab post type (posts === likes === saved) */
 export interface UserTabPost {
     id: number;
     title: string;
@@ -22,22 +33,47 @@ export interface UserTabPost {
     comments: UserTapComment[];
 }
 
-export interface CreateCommentDto {
-    text: string;
+//-------------------------------------------------- // 
+/** 메인페이지에 필요한 각 포스트의 타입 */
+export interface PostForMainPage {
+    id:  number;
+    title: string;
+    content: string | null;
+    createdAt: string;
+    updatedAt: string;
+    authorId: number;
+    author: {
+        id: number;
+        nickname: string;
+        email: string;
+    }
+    likes: {
+        userId: number;
+        postId: number;
+    }[],
+    comments: {
+        createdAt: string;
+        updatedAt: string;
+        id: number;
+        authorId: number;
+        text: string;
+        postId: number;
+    }[]
 }
 
+
+
+
+//-------------------------------------------------- //
 export interface GetPostReturnLike {
     userId: number;
     postId: number;
-    author: {
-        id: number;
-        nickanme: string;
-        email: string;
-    }
 }
 export interface GetPostReturnComment {
     id: number;
     text: string;
+    postId: number;
+    authorId: number;
     createdAt: string;
     updatedAt: string;
     author: {
@@ -46,14 +82,15 @@ export interface GetPostReturnComment {
         email: string;
         }
 }
-// getPostReturn
+
+/** 포스트 상세페이지에 필요한 타입 */
 export interface GetPostReturn {
     id: number;
     title: string;
-    content: string;
+    content: string | null;
     createdAt: string;
     updatedAt: string;
-    authorId: string;
+    authorId: number;
     author: {
         id: number;
         nickname: string;
@@ -63,6 +100,8 @@ export interface GetPostReturn {
     likes: GetPostReturnLike[];
 }
 
+
+//-------------------------------------------------- //
 
 // cretae new post
 export interface CreatePostData {
@@ -74,3 +113,5 @@ export interface UpdatePostData {
     title?: string;
     content?: string;
 }
+
+//-------------------------------------------------- //

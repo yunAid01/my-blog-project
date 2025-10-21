@@ -15,12 +15,7 @@ import type { AuthenticatedUser } from 'src/user/types/user,types';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  // @Post() 데코레이터는 HTTP POST 요청을 처리합니다.
-  // 즉, 'POST /posts' 요청이 이 메서드로 들어옵니다.
   @Post()
-  // @Body() 데코레이터는 요청의 본문(body)에 담겨온 JSON 데이터를
-  // createPostDto 파라미터에 자동으로 넣어달라고 NestJS에 요청합니다.
-  // 이때 CreatePostDto 타입을 지정해서, 들어온 데이터가 '주문서 양식'에 맞는지 확인합니다.
   @UseGuards(AuthGuard('jwt')) // <--- 이 경로에 '가드'를 배치합니다!
   create(
     @Body() createPostDto: CreatePostDto,
@@ -31,21 +26,17 @@ export class PostController {
     return this.postService.create(createPostDto, userId);
   }
 
-  @Get() // HTTP GET 요청을 처리하는 '핸들러'입니다.
-  // 즉, 'GET /posts' 요청이 들어오면 이 메서드가 실행됩니다.
+  @Get()
   findAll() {
-    // '홀 매니저'가 '주방 셰프'에게 "모든 메뉴 목록 주세요!" 라고 요청하는 부분입니다.
     return this.postService.findAll();
   }
 
-  // @Get(':id') 데코레이터는 '/posts/' 뒤에 오는 동적인 값(:id)을 처리합니다.
-  // 예를 들어, /posts/1, /posts/abc 등의 요청이 모두 이 핸들러로 들어옵니다.
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    // 홀 매니저가 손님의 '1번 메뉴' 주문을 받고, 셰프에게 전달합니다.
-    // 데이터베이스의 id는 숫자 타입이므로, '+'를 붙여 문자열 id를 숫자(number)로 변환해줍니다.
     return this.postService.findOne(+id);
   }
+  
   @Get(':id/edit')
   @UseGuards(AuthGuard('jwt'))
   findOneForEdit(@Param('id') postId: string) {

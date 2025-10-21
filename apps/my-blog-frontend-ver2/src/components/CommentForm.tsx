@@ -20,7 +20,6 @@ export default function CommentForm ({ postId }: CommentFormProps) {
         mutationFn: createComment,
         onSuccess: (data) => {
             console.log(`댓글 작성완료: ${data}`)
-
             // ✅ 1. 상세 페이지의 데이터를 무효화합니다.
             queryClient.invalidateQueries({ queryKey: ['post', postId] });
             // ✅ 2. 메인 페이지의 전체 게시물 목록 데이터도 무효화합니다.
@@ -29,15 +28,17 @@ export default function CommentForm ({ postId }: CommentFormProps) {
         },
         onError: (error) => {
             alert(`댓글 작성 실패: ${error.message}`);
-            throw new Error(`댓글 작성 오류 : ${error.message}`)
-            // 입력창을 깨끗하게 비워줍니다.
             setText('');
+            throw new Error(`댓글 작성 오류 : ${error.message}`)
         }
     });
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        createCommentAction({ postId, text });
+        const createCommentData = {
+            text: text
+        }
+        createCommentAction({ postId, createCommentData });
     };
 
     return(
