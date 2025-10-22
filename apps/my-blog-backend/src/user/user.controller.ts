@@ -15,8 +15,8 @@ export class UserController {
 
   // POST /user 요청을 처리합니다.(create User)
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(createUserDto);
   }
 
   // 'POST /user/login' 경로로 요청을 받습니다. (login User)
@@ -54,27 +54,27 @@ export class UserController {
   
   @Get(':id')
   /** user for profile */
-  findOne(@Param('id') userId: string) {
+  findUserForProfile(@Param('id') userId: string) {
     return this.userService.findUserForProfile(+userId);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard('jwt')) // JWT 인증 가드를 적용합니다.
-  update(
+  updateUser(
     @Param('id') userId: string,
     @User() user: AuthenticatedUser,
     @Body() updateUserDto: UpdateUserDto
   ) {
-    return this.userService.update(+userId, user, updateUserDto);
+    return this.userService.updateUser(+userId, user, updateUserDto);
   }
 
   // 유저 회원 삭제
   @Delete(':id')
   @UseGuards(AuthGuard('jwt')) // JWT 인증 가드를 적용합니다.
-  remove(
+  removeUser(
     @Param('id') id: string,
     @User() user: AuthenticatedUser
   ) {
-    return this.userService.remove(+id, user);
+    return this.userService.removeUser(+id, user);
   }
 }

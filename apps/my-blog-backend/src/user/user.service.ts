@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { getMeUser, LoginReturn, PublicUser, UserForProfile, UserTabPost } from '@my-blog/types';
@@ -21,10 +21,10 @@ export class UserService {
   ) {}
 
   // create 메서드를 async/await를 사용하도록 변경합니다.
-  async create(createUserDto: CreateUserDto): Promise<PublicUser> {
+  async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
     const { email, password, nickname } = createUserDto;
     if (!email || !password || !nickname) {
-      throw new NotFoundException(
+      throw new ForbiddenException(
         '이메일, 비밀번호, 닉네임은 필수 입력 사항입니다.'
       );
     }
@@ -63,7 +63,7 @@ export class UserService {
     const { password: _, ...userWithoutPassword } = user;
   
     return {
-      message: '로그인 성공!',
+      message: '로그인 성공',
       accessToken,
       user: {
         ...userWithoutPassword,
@@ -93,8 +93,7 @@ export class UserService {
     return getMeUser;
   }
 
-  // user post tab
-  // ✅ 1.특정 유저의 모든 데이터를 가져옵니다 ..
+  /** 특정 유저가 올렸던 게시물만 가져오기 */
   async findUserPosts(userId: number): Promise<UserTabPost[]> {
     const userPosts = await this.prisma.post.findMany({
       where: { authorId: userId },
@@ -107,7 +106,7 @@ export class UserService {
     return userPosts.map(mapPostToDto);
   }
 
-  // ✅ 2. 특정 유저가 좋아요 누른 게시물만 가져오기
+  /** 특정 유저가 좋아요 누른 게시물만 가져오기 */
   async findUserLikedPosts(userId: number): Promise<UserTabPost[]>{
     const likes = await this.prisma.like.findMany({
       where: { userId: userId },
@@ -126,7 +125,7 @@ export class UserService {
     return likedPosts.map(mapPostToDto)
   }
 
-  // ✅ 3. 특정 유저가 저장한 게시물만 가져오기
+  /** 특정 유저가 저장한 게시물만 가져오기 */
   async findUserSavedPosts(userId: number): Promise<UserTabPost[]> {
     const saved = await this.prisma.savedPost.findMany({
       where: { userId: userId },
@@ -196,7 +195,7 @@ export class UserService {
 
   // 유저정보 업그레이드
   // id = 업데이터하려는 유저의id , user.id = 현재 로그인한 유저의 id
-  async update(
+  async updateUser(
     id: number,
     user: AuthenticatedUser,
     updateUserDto: UpdateUserDto
@@ -223,10 +222,12 @@ export class UserService {
   }
 
   // 회원탈퇴
-  async remove(id: number, user: AuthenticatedUser) {
+  async removeUser(id: number, user: AuthenticatedUser) {
     const userId = user.id
 
     if (userId !== id) {
+
+
       throw new UnauthorizedException('본인의 정보만 삭제할 수 있습니다.');
     }
 
