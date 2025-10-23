@@ -1,6 +1,5 @@
 // packages/types/src/index.ts
 
-
 // 기존에 있던 프론트엔드용 타입들도 export 합니다.
 export * from './auth';
 export * from './post';

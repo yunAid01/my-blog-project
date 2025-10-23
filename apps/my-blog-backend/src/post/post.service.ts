@@ -14,14 +14,14 @@ export class PostService {
     const newPost = await this.prisma.post.create({
       data: {
         ...createPostDto,
-        authorId: userId
-      }
+        authorId: userId,
+      },
     });
     return {
       ...newPost,
       createdAt: newPost.createdAt.toISOString(),
-      updatedAt: newPost.updatedAt.toISOString()
-    }
+      updatedAt: newPost.updatedAt.toISOString(),
+    };
   }
 
   // --------------------------------------------------------- //
@@ -29,7 +29,7 @@ export class PostService {
   async findAll(): Promise<PostForMainPage[]> {
     const allPosts = await this.prisma.post.findMany({
       orderBy: {
-        createdAt: 'desc' // 최신순
+        createdAt: 'desc', // 최신순
       },
       include: {
         likes: true,
@@ -37,11 +37,11 @@ export class PostService {
           select: {
             id: true,
             email: true,
-            nickname: true
-          }
+            nickname: true,
+          },
         },
-        comments: true
-      }
+        comments: true,
+      },
     });
     return allPosts.map((post) => ({
       ...post,
@@ -51,8 +51,8 @@ export class PostService {
         ...comment,
         createdAt: comment.createdAt.toISOString(),
         updatedAt: comment.createdAt.toISOString(),
-      }))
-    }))
+      })),
+    }));
   }
 
   // --------------------------------------------------------- //
@@ -60,17 +60,19 @@ export class PostService {
   async findOneForEdit(postId: number): Promise<Post> {
     const originalPost = await this.prisma.post.findUnique({
       where: {
-        id: postId
-      }
-    })
+        id: postId,
+      },
+    });
     if (!originalPost) {
-      throw new NotFoundException('파일을 찾을 수 없어 업데이트가 불가능 합니다...')
+      throw new NotFoundException(
+        '파일을 찾을 수 없어 업데이트가 불가능 합니다...',
+      );
     }
     return {
       ...originalPost,
       createdAt: originalPost.createdAt.toISOString(),
-      updatedAt: originalPost.updatedAt.toISOString()
-    }
+      updatedAt: originalPost.updatedAt.toISOString(),
+    };
   }
 
   // --------------------------------------------------------- //
@@ -84,29 +86,29 @@ export class PostService {
           select: {
             id: true,
             email: true,
-            nickname: true
-          }
+            nickname: true,
+          },
         },
         comments: {
           orderBy: {
-            createdAt: 'desc' // 최신순으로 정렬
+            createdAt: 'desc', // 최신순으로 정렬
           },
           include: {
             author: {
               select: {
                 id: true,
                 nickname: true,
-                email: true
-              }
-            }
-          }
-        }
-      }
+                email: true,
+              },
+            },
+          },
+        },
+      },
     });
     if (!findOnePost) {
       throw new NotFoundException('해당하는 포스트가 없습니다.');
     }
-    
+
     return {
       ...findOnePost,
       createdAt: findOnePost.createdAt.toISOString(),
@@ -114,19 +116,19 @@ export class PostService {
       comments: findOnePost.comments.map((comment) => ({
         ...comment,
         createdAt: comment.createdAt.toISOString(),
-        updatedAt: comment.updatedAt.toISOString()
-      }))
-    }
+        updatedAt: comment.updatedAt.toISOString(),
+      })),
+    };
   }
 
   // --------------------------------------------------------- //
   /**  update post id가 일치하는 게시글의 내용을 수정합니다. */
   async update(postId: number, updatePostDto: UpdatePostDto): Promise<Post> {
     const findPost = await this.prisma.post.findUnique({
-      where: { id: postId}
+      where: { id: postId },
     });
     if (!findPost) {
-      throw new NotFoundException('페이지를 찾을 수 없습니다...')
+      throw new NotFoundException('페이지를 찾을 수 없습니다...');
     }
     const updatePost = await this.prisma.post.update({
       where: { id: postId },
@@ -135,8 +137,8 @@ export class PostService {
     return {
       ...updatePost,
       createdAt: updatePost.createdAt.toISOString(),
-      updatedAt: updatePost.updatedAt.toDateString()
-    }
+      updatedAt: updatePost.updatedAt.toDateString(),
+    };
   }
 
   // --------------------------------------------------------- //
@@ -146,7 +148,7 @@ export class PostService {
       where: { id: postId },
     });
     return {
-      message: '게시글이 삭제되었습니다.'
-    }
+      message: '게시글이 삭제되었습니다.',
+    };
   }
 }

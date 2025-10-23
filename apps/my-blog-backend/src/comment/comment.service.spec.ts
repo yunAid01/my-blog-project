@@ -8,24 +8,26 @@ describe('CommentService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CommentService,
+      providers: [
+        CommentService,
         {
-          provide: PrismaService, 
-          useValue: { // 가짜 PrismaService 객체를 만듭니다.
+          provide: PrismaService,
+          useValue: {
+            // 가짜 PrismaService 객체를 만듭니다.
             comment: {
               create: jest.fn(),
               findMany: jest.fn(),
               findUnique: jest.fn(),
               update: jest.fn(),
               delete: jest.fn(),
-            }
-          }
-        }
+            },
+          },
+        },
       ],
     }).compile();
 
     service = module.get<CommentService>(CommentService);
-    prisma = module.get<PrismaService>(PrismaService);// 가짜 PrismaService 주입
+    prisma = module.get<PrismaService>(PrismaService); // 가짜 PrismaService 주입
   });
 
   it('should be defined', () => {
@@ -36,7 +38,7 @@ describe('CommentService', () => {
     const userId = 1;
     const postId = 1;
     const mockCreateCommentDto = {
-      text: "this is my firt comment"
+      text: 'this is my firt comment',
     };
 
     const mockCreatedComment = {
@@ -45,7 +47,7 @@ describe('CommentService', () => {
       updatedAt: new Date(),
       authorId: userId,
       text: mockCreateCommentDto.text,
-      postId: postId
+      postId: postId,
     };
 
     // PrismaService의 create 메서드가 호출될 때, mockCreatedComment를 반환하도록 설정
@@ -65,5 +67,5 @@ describe('CommentService', () => {
         postId: postId,
       },
     });
-  })
+  });
 });

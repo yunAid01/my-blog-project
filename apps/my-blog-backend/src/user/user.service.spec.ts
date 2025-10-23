@@ -6,7 +6,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 
 // real
 import { UserService } from './user.service';
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt'; // 1. '진짜 토큰 발급기' 설계도 import
 import * as bcrypt from 'bcrypt'; // 1. '진짜' bcrypt 가져오기
 
@@ -18,7 +18,6 @@ import {
 
 import { PublicUser } from '@my-blog/types';
 import { UpdateUserDto } from './dto/update-user.dto';
-
 
 // 2. 🚨 "이 파일에서 'bcrypt'를 부르면, '가짜'를 줘!"라고 선언!
 jest.mock('bcrypt', () => ({
@@ -45,7 +44,7 @@ const mockJwtService = {
 describe('UserService', () => {
   let service: UserService;
 
-  // --- 👇 "가짜 데이터" 그릇 준비! (let) ---
+  // --- "가짜 데이터" 그릇 준비! (let) ---
   // 이 변수들은 모든 'it' 블록에서 재사용됩니다.
   let mockUserCreateData: CreateUserDto;
   let mockUserLoginData: LoginUserDto;
@@ -61,12 +60,12 @@ describe('UserService', () => {
         UserService, // 주인공(진짜 로직)
         {
           provide: PrismaService,
-          useValue: mockPrismaService
+          useValue: mockPrismaService,
         },
         {
           provide: JwtService,
           useValue: mockJwtService,
-        }
+        },
       ],
     }).compile();
     service = module.get<UserService>(UserService); // real
@@ -87,8 +86,8 @@ describe('UserService', () => {
     };
     mockUserUpdateData = {
       email: 'jiwon@email.com',
-      nickname: 'testerian'
-    }
+      nickname: 'testerian',
+    };
     fakeUserDbResult = {
       id: 1,
       email: 'test@email.com',
@@ -103,26 +102,26 @@ describe('UserService', () => {
       nickname: 'tester',
       createdAt: '2025-01-01T10:00:00.000Z',
       updatedAt: '2025-01-01T10:00:00.000Z',
-    }
+    };
   });
 
   // (afterEach 추가 - 필수!)
   afterEach(() => {
     jest.clearAllMocks(); // '가짜' 배우들의 메모리를 깨끗이 청소!
   });
-  
 
   it('should be defined (정의 되어야 함)', () => {
     expect(service).toBeDefined();
   });
-  
+
   // ---------------------------------------------
   // 회원가입 (createUser)
   // ---------------------------------------------
 
   describe('user register', () => {
     it('should create new user with register data (회원가입 성공)', async () => {
-      const expectedServiceResult = { // 최종리턴
+      const expectedServiceResult = {
+        // 최종리턴
         id: 1,
         email: 'test@email.com',
         nickname: 'tester',
@@ -134,7 +133,7 @@ describe('UserService', () => {
       mockPrismaService.user.create.mockResolvedValue(fakeUserDbResult); // fake
 
       // 검증
-      const result = await service.createUser(mockUserCreateData)
+      const result = await service.createUser(mockUserCreateData);
       expect(result).toEqual(expectedServiceResult);
       expect(mockPrismaService.user.create).toHaveBeenCalledWith({
         data: {
@@ -142,22 +141,25 @@ describe('UserService', () => {
           nickname: mockUserCreateData.nickname,
           // "비밀번호는 '1234'가 아닌(not.stringContaining),
           //  '어떤 문자열(any(String))'이 들어갔어야 해!"
-          password: expect.not.stringContaining(mockUserCreateData.password) as string,
+          password: expect.not.stringContaining(
+            mockUserCreateData.password,
+          ) as string,
         },
       });
-    })
+    });
 
     it('should have email & password & nickname data for register (회원가입 실패)', async () => {
-      const mockFailedUserCreateData = { // 일부러 틀린 데이터 넣음
+      const mockFailedUserCreateData = {
+        // 일부러 틀린 데이터 넣음
         email: 'test@email.com',
-        password: '1234'
-      }
+        password: '1234',
+      };
       await expect(
         service.createUser(mockFailedUserCreateData as any),
       ).rejects.toThrow(ForbiddenException);
-    })
-  })
-  
+    });
+  });
+
   // ---------------------------------------------
   // 로그인 (login)
   // ---------------------------------------------
@@ -172,7 +174,7 @@ describe('UserService', () => {
           nickname: 'tester',
           createdAt: '2025-01-01T10:00:00.000Z',
           updatedAt: '2025-01-01T10:00:00.000Z',
-        }
+        },
       };
       //fake
       mockPrismaService.user.findUnique.mockResolvedValue(fakeUserDbResult);
@@ -233,31 +235,35 @@ describe('UserService', () => {
   // ---------------------------------------------
   describe('user update', () => {
     it('should return success when user is successfully updated (유저 업데이트 성공)', async () => {
-      const paramUserId = 1
+      const paramUserId = 1;
       mockPrismaService.user.update.mockResolvedValue({
         ...fakeUserDbResult,
         email: mockUserUpdateData.email,
-        nickname: mockUserUpdateData.nickname
+        nickname: mockUserUpdateData.nickname,
       });
       const expectedServiceResult = {
         id: mockLoginedPublicUser.id,
         email: mockUserUpdateData.email,
         nickname: mockUserUpdateData.nickname,
         createdAt: mockLoginedPublicUser.createdAt,
-        updatedAt: mockLoginedPublicUser.updatedAt
-      }
-      const result = await service.updateUser(paramUserId, mockLoginedPublicUser, mockUserUpdateData);
-      expect(result).toEqual(expectedServiceResult)
+        updatedAt: mockLoginedPublicUser.updatedAt,
+      };
+      const result = await service.updateUser(
+        paramUserId,
+        mockLoginedPublicUser,
+        mockUserUpdateData,
+      );
+      expect(result).toEqual(expectedServiceResult);
 
       //과정
       expect(mockPrismaService.user.update).toHaveBeenCalledWith({
         where: { id: paramUserId },
         data: mockUserUpdateData,
       });
-    })
+    });
 
     it('should allow only the user to update their own profile (유저 업데이트 실패)', async () => {
-      const paramUserId = 2 // axios.patch(user/2)
+      const paramUserId = 2; // axios.patch(user/2)
       await expect(
         service.updateUser(
           paramUserId,
@@ -265,6 +271,6 @@ describe('UserService', () => {
           mockUserUpdateData,
         ),
       ).rejects.toThrow(UnauthorizedException);
-    })
-  })
-})
+    });
+  });
+});

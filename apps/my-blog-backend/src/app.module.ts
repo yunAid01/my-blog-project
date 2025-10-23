@@ -8,9 +8,15 @@ import { CommentModule } from './comment/comment.module';
 import { LikeModule } from './like/like.module';
 import { FollowModule } from './follow/follow.module';
 
-
 @Module({
-  imports: [PostModule, PrismaModule, UserModule, CommentModule, LikeModule, FollowModule],
+  imports: [
+    PostModule,
+    PrismaModule,
+    UserModule,
+    CommentModule,
+    LikeModule,
+    FollowModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

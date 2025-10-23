@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -11,12 +20,12 @@ import type { AuthenticatedUser } from 'src/user/types/user,types';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Post() 
+  @Post()
   @UseGuards(AuthGuard('jwt')) // 당연히 로그인이 필요합니다.
   create(
     @Param('postId') postId: string,
     @Body() createCommentDto: CreateCommentDto,
-    @User() user: AuthenticatedUser
+    @User() user: AuthenticatedUser,
   ) {
     return this.commentService.create(+postId, createCommentDto, user.id);
   }
@@ -31,13 +40,13 @@ export class CommentController {
     return this.commentService.findOne(+commentid);
   }
 
-  // 댓글 수정 
+  // 댓글 수정
   @Patch(':commentId')
-  @UseGuards(AuthGuard('jwt')) 
+  @UseGuards(AuthGuard('jwt'))
   update(
     @Param('commentId') commentId: string,
     @Body() updateCommentDto: UpdateCommentDto,
-    @User() user: AuthenticatedUser
+    @User() user: AuthenticatedUser,
   ) {
     return this.commentService.update(+commentId, updateCommentDto, user.id);
   }
@@ -47,7 +56,7 @@ export class CommentController {
   @UseGuards(AuthGuard('jwt'))
   remove(
     @Param('commentId') commentId: string,
-    @User() user: AuthenticatedUser
+    @User() user: AuthenticatedUser,
   ) {
     return this.commentService.remove(+commentId, user.id);
   }

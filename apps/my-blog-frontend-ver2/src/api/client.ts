@@ -4,50 +4,51 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 
 // 1. 기본 설정으로 axios 인스턴스(객체)를 생성합니다.
 const apiClient = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
 // 2. 요청 인터셉터(Request Interceptor) 설정
 //    이 코드는 apiClient를 통해 보내는 *모든* 요청이 서버로 출발하기 *직전*에 가로채서
 //    특정 작업을 추가할 수 있게 해줍니다.
 apiClient.interceptors.request.use(
-    (config) => {
-        // 로컬 스토리지에서 토큰을 가져옵니다.
-        const token = localStorage.getItem('jwt-token');
+  (config) => {
+    // 로컬 스토리지에서 토큰을 가져옵니다.
+    const token = localStorage.getItem('jwt-token');
 
-        // 토큰이 존재하면, 요청 헤더(headers)에 'Authorization' 이라는 이름으로 토큰을 담아 보냅니다.
-        // 마치 택배 기사가 배송 전에 항상 신분증을 챙기는 것과 같아요!
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config; // 수정된 설정(config)으로 요청을 계속 진행합니다.
-    },
-    (error) => {
-        // 요청 설정 중 에러가 발생하면 처리합니다.
-        return Promise.reject(error);
+    // 토큰이 존재하면, 요청 헤더(headers)에 'Authorization' 이라는 이름으로 토큰을 담아 보냅니다.
+    // 마치 택배 기사가 배송 전에 항상 신분증을 챙기는 것과 같아요!
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    return config; // 수정된 설정(config)으로 요청을 계속 진행합니다.
+  },
+  (error) => {
+    // 요청 설정 중 에러가 발생하면 처리합니다.
+    return Promise.reject(error);
+  },
 );
 
 /** 응답 인터셉터 (공통 에러처리 핵심) */
 apiClient.interceptors.response.use(
-    (response: AxiosResponse) => {
-        // [성공] 2xx 응답이 오면
-        return response.data;
-    },
-    (error: AxiosError) => {
-        console.error('API Error Occurred:', error);
-        if (error.response?.status === 401) {
-            console.log('인증 에러 ! 로그인이 필요합니다.')
-            alert('로그인이 필요합니다..')
-        }
-
-        const serverErrorMessage = (error.response?.data as { message?: string })?.message;
-        // UI단(React Query 등)으로 에러를 다시 던져줍니다.
-        // 이래야 컴포넌트에서 isError 상태를 알 수 있습니다.
-        return Promise.reject(
-            new Error(serverErrorMessage || '알 수 없는 에러가 발생했습니다.')
-        );
+  (response: AxiosResponse) => {
+    // [성공] 2xx 응답이 오면
+    return response.data;
+  },
+  (error: AxiosError) => {
+    console.error('API Error Occurred:', error);
+    if (error.response?.status === 401) {
+      console.log('인증 에러 ! 로그인이 필요합니다.');
+      alert('로그인이 필요합니다..');
     }
-)
+
+    const serverErrorMessage = (error.response?.data as { message?: string })
+      ?.message;
+    // UI단(React Query 등)으로 에러를 다시 던져줍니다.
+    // 이래야 컴포넌트에서 isError 상태를 알 수 있습니다.
+    return Promise.reject(
+      new Error(serverErrorMessage || '알 수 없는 에러가 발생했습니다.'),
+    );
+  },
+);
 
 export default apiClient;

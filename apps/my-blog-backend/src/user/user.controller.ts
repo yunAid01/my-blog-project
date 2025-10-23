@@ -8,7 +8,7 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-
+d;
 // DI
 import { UserService } from './user.service';
 
@@ -17,12 +17,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 
-
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator/user.decorater';
 import type { AuthenticatedUser } from './types/user,types';
-
-
 
 @Controller('user')
 export class UserController {
@@ -49,24 +46,23 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   findMe(@Param('id') userId: string) {
     return this.userService.findMe(+userId);
-  };
+  }
 
   @Get(':id/posts')
   findUserPosts(@Param('id') userId: string) {
     return this.userService.findUserPosts(+userId);
-}
+  }
 
   @Get(':id/likes')
   findUserLikedPosts(@Param('id') userId: string) {
     return this.userService.findUserLikedPosts(+userId);
-}
+  }
 
   @Get(':id/saved')
   findUserSavedPosts(@Param('id') userId: string) {
     return this.userService.findUserSavedPosts(+userId);
-}
+  }
 
-  
   @Get(':id')
   /** user for profile */
   findUserForProfile(@Param('id') userId: string) {
@@ -79,7 +75,7 @@ export class UserController {
   updateUser(
     @Param('id') userId: string,
     @User() user: AuthenticatedUser,
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.userService.updateUser(+userId, user, updateUserDto);
   }

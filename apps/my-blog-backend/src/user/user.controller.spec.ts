@@ -10,16 +10,16 @@ const mockUserService = {
   createUser: jest.fn(), // 굳
   login: jest.fn(),
 
-  findUserPosts: jest.fn(), 
+  findUserPosts: jest.fn(),
   findUserLikedPosts: jest.fn(),
   findUserSavedPosts: jest.fn(),
   findUserForProfile: jest.fn(),
   updateUser: jest.fn(),
   removeUser: jest.fn(),
-}
+};
 
 describe('UserController', () => {
-  let controller: UserController; // 🤵‍♂️ '진짜' 
+  let controller: UserController; // 🤵‍♂️ '진짜'
   let service: UserService; // 👨‍🍳 '가짜' (이름표만 UserService)
   let mockUserCreateData: CreateUserDto;
   let mockUserLoginData: LoginUserDto;
@@ -30,8 +30,8 @@ describe('UserController', () => {
       providers: [
         {
           provide: UserService,
-          useValue: mockUserService
-        }
+          useValue: mockUserService,
+        },
       ],
     }).compile();
 
@@ -46,7 +46,7 @@ describe('UserController', () => {
     mockUserLoginData = {
       email: 'test@email.com',
       password: '1234',
-    }
+    };
   });
 
   // (청소!)
@@ -92,13 +92,13 @@ describe('UserController', () => {
         nickname: 'tester',
         createdAt: '2025-01-01T10:00:00.000Z',
         updatedAt: '2025-01-01T10:00:00.000Z',
-      }
+      },
     };
 
     // service => UserService
     (service.login as jest.Mock).mockResolvedValue(expectedreturnResult);
     const result = await controller.login(mockUserLoginData); // ㄹㅇ
     expect(result).toEqual(expectedreturnResult);
-    expect(service.login).toHaveBeenCalledWith(mockUserLoginData)
-  })
+    expect(service.login).toHaveBeenCalledWith(mockUserLoginData);
+  });
 });

@@ -6,16 +6,16 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
 
 interface QueryProviderProps {
-    children: React.ReactNode
+  children: React.ReactNode;
 }
 
-export default function QueryProvider({children}: QueryProviderProps) {
-    const [queryClient] = useState(() => new QueryClient());
+export default function QueryProvider({ children }: QueryProviderProps) {
+  const [queryClient] = useState(() => new QueryClient());
 
-    return (
+  return (
     <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false} />
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-    );
+  );
 }

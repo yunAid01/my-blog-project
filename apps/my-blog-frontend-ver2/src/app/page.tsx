@@ -1,12 +1,12 @@
 //src/app/page.tsx
 'use client';
 
-import type { PostForMainPage } from "@my-blog/types";
-import { getPostsForMainPage } from "@/api/posts";
+import type { PostForMainPage } from '@my-blog/types';
+import { getPostsForMainPage } from '@/api/posts';
 import { useQuery } from '@tanstack/react-query';
 
 // components
-import PostCard from "@/components/PostCard";
+import PostCard from '@/components/PostCard';
 
 export default function Home() {
   const {
@@ -16,7 +16,7 @@ export default function Home() {
     error,
   } = useQuery<PostForMainPage[]>({
     queryKey: ['posts'], // 이 데이터의 고유한 키. 이 키로 캐싱됩니다.
-    queryFn: getPostsForMainPage,   // 데이터를 가져올 함수
+    queryFn: getPostsForMainPage, // 데이터를 가져올 함수
   });
 
   if (isLoading) {

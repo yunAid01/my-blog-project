@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { LikeService } from './like.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/decorator/user.decorater';
@@ -19,7 +28,8 @@ export class LikeController {
   @Get()
   findAll() {
     return this.likeService.findAll();
-  }ㄴ
+  }
+  ㄴ;
 
   // 좋아요 취소하기
   @Delete()

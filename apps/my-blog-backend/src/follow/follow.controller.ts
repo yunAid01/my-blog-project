@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { FollowService } from './follow.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/decorator/user.decorater';
@@ -13,7 +22,7 @@ export class FollowController {
   @UseGuards(AuthGuard('jwt'))
   create(
     @Param('userId') followingId: string, // 팔로우 당하는 사람
-    @User() user: AuthenticatedUser // 팔로우 하는 사람 
+    @User() user: AuthenticatedUser, // 팔로우 하는 사람
   ) {
     return this.followService.create(+followingId, user.id);
   }
@@ -23,7 +32,7 @@ export class FollowController {
   @UseGuards(AuthGuard('jwt'))
   remove(
     @Param('userId') followingId: string, // 언팔로우 당하는 사람
-    @User() user: AuthenticatedUser
+    @User() user: AuthenticatedUser,
   ) {
     return this.followService.remove(+followingId, user.id);
   }
