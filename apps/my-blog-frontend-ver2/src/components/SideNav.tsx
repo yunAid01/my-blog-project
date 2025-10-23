@@ -30,7 +30,7 @@ export default function SideNav() {
 
   const navLinks = [
     { href: '/', icon: <Home />, text: '홈' },
-    { href: '/search', icon: <Search />, text: 'comming soon...' },
+    { href: '/search', icon: <Search />, text: '검색' },
     { href: '/posts/create', icon: <PlusSquare />, text: '만들기' },
   ];
 

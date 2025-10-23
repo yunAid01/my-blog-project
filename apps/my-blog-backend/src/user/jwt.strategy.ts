@@ -39,7 +39,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       ...userWithoutPassword,
       createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString()
+      updatedAt: user.updatedAt.toISOString(),
     };
   }
 }

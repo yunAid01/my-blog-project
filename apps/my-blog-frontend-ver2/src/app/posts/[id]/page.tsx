@@ -55,7 +55,7 @@ export default function PostDetailPage() {
         - (기본) flex-col: 모바일에서는 세로로 쌓임
         - (lg) lg:flex-row: 데스크탑에서 가로로 배치
         - (lg) lg:h-[90vh], lg:border, lg:rounded-lg, lg:overflow-hidden:
-             데스크탑에서만 모달과 같은 스타일 적용
+          데스크탑에서만 모달과 같은 스타일 적용
       */}
       <div className="max-w-5xl mx-auto bg-white flex flex-col lg:flex-row lg:h-[90vh] lg:border lg:border-gray-200 lg:rounded-lg lg:overflow-hidden">
         {/* [REFACTORED]

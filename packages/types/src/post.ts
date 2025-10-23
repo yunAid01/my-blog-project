@@ -7,6 +7,7 @@ export interface Post {
   authorId: number;
 }
 
+
 //-------------------------------------------------- //
 // 유저페이지의 postTab 에 들어갈 타입
 export interface UserTapComment {
@@ -47,6 +48,34 @@ export interface PostForMainPage {
     nickname: string;
     email: string;
   };
+  likes: {
+    userId: number;
+    postId: number;
+  }[];
+  comments: {
+    createdAt: string;
+    updatedAt: string;
+    id: number;
+    authorId: number;
+    text: string;
+    postId: number;
+  }[];
+}
+
+//-------------------------------------------------- //
+/** search page에 필요한 각 포스트의 타입 */
+export interface PostForSearchPage {
+  id: number;
+  title: string;
+  content: string | null;
+  authorId: number;
+  createdAt: string;
+  updatedAt: string;
+  author: {
+    id: number;
+    nickname: string;
+    email: string;
+  }
   likes: {
     userId: number;
     postId: number;

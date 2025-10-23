@@ -33,7 +33,7 @@ export default function RootLayout({
           <SideNav />
           {/* 반응형 디자인 때문에 수정함 */}
           <main className="ml-20 lg:ml-64">
-            {children}
+            {children}  
           </main>
         </QueryProvider>
       </body>

@@ -1,6 +1,9 @@
 import {
+  BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -35,7 +38,7 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto): Promise<PublicUser> {
     const { email, password, nickname } = createUserDto;
     if (!email || !password || !nickname) {
-      throw new ForbiddenException(
+      throw new BadRequestException(
         '이메일, 비밀번호, 닉네임은 필수 입력 사항입니다.',
       );
     }
@@ -43,7 +46,7 @@ export class UserService {
       where: { email: email },
     });
     if (user) {
-      throw new ForbiddenException('이미 존재하는 유저입니다..');
+      throw new ConflictException('이미 존재하는 유저입니다..');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.prisma.user.create({
@@ -65,20 +68,18 @@ export class UserService {
     const { email, password } = loginUserDto;
 
     const user = await this.prisma.user.findUnique({ where: { email: email } });
-    if (!user) {
-      throw new NotFoundException('해당하는 이메일의 유저를 찾을 수 없습니다.');
-    }
+    const isPasswordMatch: boolean = user
+      ? await bcrypt.compare(password, user.password)
+      : false;
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatch) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    if (!user || !isPasswordMatch) {
+      throw new UnauthorizedException('아이디 또는 비밀번호가 일치하지 않습니다.');
     }
     // 5. 비밀번호가 일치하면, '출입증(JWT)'을 생성합니다.
     const payload = { email: user.email, sub: user.id };
     const accessToken = this.jwtService.sign(payload);
 
     const { password: _, ...userWithoutPassword } = user;
-
     return {
       message: '로그인 성공',
       accessToken,
@@ -96,8 +97,8 @@ export class UserService {
     return users;
   }
 
-  // frontend => userGetMe method -> 로그인 데이터 유지
   // controller API_URL]/user/:id/me
+  /** frontend => userGetMe method -> 로그인 데이터 유지 */
   async findMe(userId: number): Promise<getMeUser> {
     const me = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -105,18 +106,12 @@ export class UserService {
     if (!me) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }
-    const {
-      password: a,
-      email: b,
-      createdAt: c,
-      updatedAt: d,
-      ...getMeUser
-    } = me;
+    const { password, email, createdAt, updatedAt, ...getMeUser } = me;
     console.log(`getMe : ${me.id}`);
     return getMeUser;
   }
 
-  /** 특정 유저가 올렸던 게시물만 가져오기 */
+  /** 특정 유저가 생성했던 게시물만 가져오기 */
   async findUserPosts(userId: number): Promise<UserTabPost[]> {
     const userPosts = await this.prisma.post.findMany({
       where: { authorId: userId },
@@ -218,9 +213,9 @@ export class UserService {
   // 유저정보 업그레이드
   // id = 업데이터하려는 유저의id , user.id = 현재 로그인한 유저의 id
   async updateUser(
-    id: number,
-    user: AuthenticatedUser, //publicUser
-    updateUserDto: UpdateUserDto,
+    id: number, // user/:id -> params
+    user: AuthenticatedUser, //login한 publicUser
+    updateUserDto: UpdateUserDto, // update data
   ): Promise<PublicUser> {
     if (id !== user.id) {
       throw new UnauthorizedException('본인의 정보만 수정할 수 있습니다.');
@@ -239,7 +234,7 @@ export class UserService {
       };
     } catch (error) {
       console.error(error);
-      throw new NotFoundException('유저 정보 수정에 실패했습니다.');
+      throw new InternalServerErrorException('유저 정보 수정에 실패했습니다.');
     }
   }
 
@@ -258,7 +253,7 @@ export class UserService {
       return { message: '유저 정보 삭제에 성공했습니다.' };
     } catch (error) {
       console.error(error);
-      throw new NotFoundException('유저 정보 삭제에 실패했습니다.');
+      throw new InternalServerErrorException('유저 정보 삭제에 실패했습니다.');
     }
   }
 }

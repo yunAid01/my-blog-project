@@ -6,9 +6,25 @@ import type {
   CreatePostData,
   PostForMainPage,
   Post,
+  PostForSearchPage,
 } from '@my-blog/types';
+
 import apiClient from './client';
 
+// ------------------ search page posts------------------- //
+/** post for search page */
+export const getPostsForSearchPage = async (): Promise<PostForSearchPage[]> => {
+  const posts: PostForSearchPage[] = await apiClient.get('/posts/search');
+  return posts;
+};
+/** search logic */
+export const searchPosts = async (keyword: string): Promise<PostForSearchPage[]> => {
+  const posts: PostForSearchPage[] = await apiClient.get(`search?q=${keyword}`);
+  return posts
+} 
+
+
+// ------------------ main page posts ------------------- //
 /** post for main page (시작 메인페이지) */
 export const getPostsForMainPage = async (): Promise<PostForMainPage[]> => {
   const allPosts: PostForMainPage[] = await apiClient.get('/posts');

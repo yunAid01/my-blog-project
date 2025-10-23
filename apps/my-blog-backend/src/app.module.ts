@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
 import { LikeModule } from './like/like.module';
 import { FollowModule } from './follow/follow.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { FollowModule } from './follow/follow.module';
     CommentModule,
     LikeModule,
     FollowModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

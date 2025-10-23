@@ -34,6 +34,15 @@ export class PostController {
     return this.postService.create(createPostDto, userId);
   }
 
+  // ------------------ new search page  ------------------- //
+  @Get('search')
+  @UseGuards(AuthGuard('jwt'))
+  getPostsForSearchPage(@User() user: AuthenticatedUser) {
+    const userId: number = user.id;
+    return this.postService.getPostsForSearchPage(userId);
+  }
+  // ------------------------------------- //
+
   @Get()
   findAll() {
     return this.postService.findAll();
@@ -44,6 +53,7 @@ export class PostController {
     return this.postService.findOne(+id);
   }
 
+  // ------------------ edit page  ------------------- //
   @Get(':id/edit')
   @UseGuards(AuthGuard('jwt'))
   findOneForEdit(@Param('id') postId: string) {

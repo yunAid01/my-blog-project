@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt'; // 1. '진짜 토큰 발급기' 설계
 import * as bcrypt from 'bcrypt'; // 1. '진짜' bcrypt 가져오기
 
 import {
+  BadRequestException,
   ForbiddenException,
   NotFoundException,
   UnauthorizedException,
@@ -156,7 +157,7 @@ describe('UserService', () => {
       };
       await expect(
         service.createUser(mockFailedUserCreateData as any),
-      ).rejects.toThrow(ForbiddenException);
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -209,7 +210,7 @@ describe('UserService', () => {
 
       await expect(
         service.login(mockUserLoginData), // 2-1. '진짜 셰프' 연기 시작
-      ).rejects.toThrow(NotFoundException); // 2-2. '에러'가 터지는지 검사
+      ).rejects.toThrow(UnauthorizedException); // 2-2. '에러'가 터지는지 검사
 
       // 3. "과정" 검증 (Then) - (선택 사항)
       // "혹시라도 토큰 발급기가 호출되진 않았겠지?" (당연히 안 됐어야 함)
