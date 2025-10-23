@@ -1,8 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+
+// DI
 import { UserService } from './user.service';
+
+// DTO
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+
+
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator/user.decorater';
 import type { AuthenticatedUser } from './types/user,types';
@@ -58,6 +73,7 @@ export class UserController {
     return this.userService.findUserForProfile(+userId);
   }
 
+  // user/:id
   @Patch(':id')
   @UseGuards(AuthGuard('jwt')) // JWT 인증 가드를 적용합니다.
   updateUser(
@@ -71,10 +87,7 @@ export class UserController {
   // 유저 회원 삭제
   @Delete(':id')
   @UseGuards(AuthGuard('jwt')) // JWT 인증 가드를 적용합니다.
-  removeUser(
-    @Param('id') id: string,
-    @User() user: AuthenticatedUser
-  ) {
+  removeUser(@Param('id') id: string, @User() user: AuthenticatedUser) {
     return this.userService.removeUser(+id, user);
   }
 }

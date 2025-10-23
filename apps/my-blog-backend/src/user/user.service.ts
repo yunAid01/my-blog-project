@@ -28,6 +28,12 @@ export class UserService {
         '이메일, 비밀번호, 닉네임은 필수 입력 사항입니다.'
       );
     }
+    const user = await this.prisma.user.findUnique({
+      where: { email: email }
+    })
+    if (user) {
+      throw new ForbiddenException('이미 존재하는 유저입니다..')
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.prisma.user.create({
       data: {
@@ -197,7 +203,7 @@ export class UserService {
   // id = 업데이터하려는 유저의id , user.id = 현재 로그인한 유저의 id
   async updateUser(
     id: number,
-    user: AuthenticatedUser,
+    user: AuthenticatedUser, //publicUser
     updateUserDto: UpdateUserDto
   ): Promise<PublicUser> {
     if (id !== user.id) {
