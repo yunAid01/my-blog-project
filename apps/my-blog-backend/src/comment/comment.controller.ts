@@ -15,7 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 // usermodel type 생성
 import { User } from 'src/user/decorator/user.decorater';
-import type { AuthenticatedUser } from 'src/user/types/user,types';
+import type { AuthenticatedUser } from 'src/user/types/user.types';
 @Controller('posts/:postId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}

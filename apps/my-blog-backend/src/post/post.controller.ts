@@ -17,7 +17,7 @@ import { UseGuards } from '@nestjs/common';
 
 // userDecorator and userClass from prisma
 import { User } from 'src/user/decorator/user.decorater';
-import type { AuthenticatedUser } from 'src/user/types/user,types';
+import type { AuthenticatedUser } from 'src/user/types/user.types';
 
 @Controller('posts')
 export class PostController {

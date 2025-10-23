@@ -21,7 +21,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt'; // 1. bcrypt를 import 합니다.
 import { JwtService } from '@nestjs/jwt'; // 1. JwtService를 import 합니다.
 import { LoginUserDto } from './dto/login-user.dto';
-import type { AuthenticatedUser } from './types/user,types';
+import type { AuthenticatedUser } from './types/user.types';
 // (login-user.dto.ts 파일은 CreateUserDto와 내용이 동일합니다. 새로 만들어주세요.)
 
 @Injectable()

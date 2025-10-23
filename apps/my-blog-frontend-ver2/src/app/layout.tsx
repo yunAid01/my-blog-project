@@ -31,7 +31,10 @@ export default function RootLayout({
       >
         <QueryProvider>
           <SideNav />
-          <main className="flex-1 p-8 ml-64">{children}</main>
+          {/* 반응형 디자인 때문에 수정함 */}
+          <main className="ml-20 lg:ml-64">
+            {children}
+          </main>
         </QueryProvider>
       </body>
     </html>

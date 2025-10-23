@@ -11,7 +11,7 @@ import {
 import { LikeService } from './like.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/decorator/user.decorater';
-import type { AuthenticatedUser } from 'src/user/types/user,types';
+import type { AuthenticatedUser } from 'src/user/types/user.types';
 
 @Controller('posts/:postId/like')
 export class LikeController {

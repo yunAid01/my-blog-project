@@ -8,7 +8,6 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-d;
 // DI
 import { UserService } from './user.service';
 
@@ -19,7 +18,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorator/user.decorater';
-import type { AuthenticatedUser } from './types/user,types';
+import type { AuthenticatedUser } from './types/user.types';
 
 @Controller('user')
 export class UserController {

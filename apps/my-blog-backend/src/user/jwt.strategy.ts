@@ -4,7 +4,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthenticatedUser } from './types/user,types';
+import { AuthenticatedUser } from './types/user.types';
 
 @Injectable()
 // PassportStrategy를 상속받아 JWT에 대한 '인증 전략'을 정의합니다.
@@ -36,6 +36,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // 보안상 password 필드는 제외하고 반환합니다.
     const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return {
+      ...userWithoutPassword,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString()
+    };
   }
 }

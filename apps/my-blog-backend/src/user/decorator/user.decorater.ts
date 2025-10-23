@@ -1,6 +1,6 @@
 // src/user/decorator/user.decorator.ts
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AuthenticatedUser } from '../types/user,types';
+import { AuthenticatedUser } from '../types/user.types';
 
 // createParamDecorator: 우리만의 커스텀 데코레이터를 만들 수 있게 해주는 함수
 export const User = createParamDecorator(
