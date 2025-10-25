@@ -29,17 +29,23 @@ model User {
   // Post[]는 Post 모델의 배열을 의미합니다.
   // 이 필드는 DB 테이블에는 존재하지 않지만, Prisma를 통해 user.posts 형태로 
   // 이 사용자가 쓴 모든 글에 쉽게 접근할 수 있게 해줍니다.
-  posts     Post[]
-  savedPosts SavedPost[]
-  comments  Comment[]
-  likes     Like[]
+  posts           Post[]
+  savedPosts      SavedPost[]
+  comments        Comment[]
+  likes           Like[]
+
+  // --- [dm 관련] ---
+  conversations   Conversation[]  @relation("ConversationUsers")
+  sentMessages    Message[]       @relation("SentMessages")
 
   // follow
   // 팔로우 하는 사람
-  followings  Follow[] @relation("Follows") 
+  followings      Follow[]        @relation("Follows") 
 
   // 팔로우 당하는 사람
-  followers   Follow[] @relation("FollowedBy")
+  followers       Follow[]        @relation("FollowedBy")
+
+  
 }
 
 
@@ -136,3 +142,29 @@ model Like {
   @@id([userId, postId])   
 }
 
+// ==========================================
+//    Conversation & Message (DM 기능) 모델
+// ==========================================
+model Conversation {
+  id              Int      @id @default(autoincrement())
+  participants    User[]   @relation("ConversationUsers")
+  messages        Message[] // 3. 이 방에서 오고간 메시지들 (1:N 관계)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// 4. "메시지" 모델
+//    실제 대화 내용입니다.
+model Message {
+  id              Int          @id @default(autoincrement())
+  text            String
+  createdAt       DateTime     @default(now())
+
+  // 보낸놈
+  sender          User         @relation("SentMessages", fields: [senderId], references: [id]) // 5. 보낸 사람
+  senderId        Int
+
+  // 속한 대화방
+  conversation    Conversation @relation(fields: [conversationId], references: [id]) // 6. 이 메시지가 속한 대화방
+  conversationId  Int
+}

@@ -8,6 +8,7 @@ import { CommentModule } from './comment/comment.module';
 import { LikeModule } from './like/like.module';
 import { FollowModule } from './follow/follow.module';
 import { SearchModule } from './search/search.module';
+import { DmModule } from './dm/dm.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SearchModule } from './search/search.module';
     LikeModule,
     FollowModule,
     SearchModule,
+    DmModule,
   ],
   controllers: [AppController],
   providers: [AppService],

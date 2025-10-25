@@ -58,7 +58,7 @@ export default function SearchPage() {
     }
 
     // --- 핀터레스트 스타일 렌더링 ---
-  return (
+    return (
     <>
         {/* ========== ⬇️ 검색 UI (Form 태그 활용) ⬇️ ========== */}
         <form onSubmit={handleSubmit} className="mb-8">
@@ -89,12 +89,12 @@ export default function SearchPage() {
                 </div>
                 {/* 검색 입력 필드 (py-2, rounded-md, sm:text-sm) */}
                 <input
-                type="text"
-                placeholder="검색..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                className="block w-full pl-10 pr-4 py-2 border border-zinc-300 rounded-md leading-5 bg-white dark:bg-zinc-800 dark:border-zinc-700 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
-                />
+                    type="text"
+                    placeholder="검색..."
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    className="block w-full pl-10 pr-4 py-2 border border-zinc-300 rounded-md leading-5 bg-white dark:bg-zinc-800 dark:border-zinc-700 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                    />
             </div>
 
             {/* 2. Small submit button (py-2, text-sm) */}

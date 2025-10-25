@@ -14,12 +14,12 @@ import apiClient from './client';
 // ------------------ search page posts------------------- //
 /** post for search page */
 export const getPostsForSearchPage = async (): Promise<PostForSearchPage[]> => {
-  const posts: PostForSearchPage[] = await apiClient.get('/posts/search');
+  const posts: PostForSearchPage[] = await apiClient.get('/search/posts');
   return posts;
 };
 /** search logic */
 export const searchPosts = async (keyword: string): Promise<PostForSearchPage[]> => {
-  const posts: PostForSearchPage[] = await apiClient.get(`search?q=${keyword}`);
+  const posts: PostForSearchPage[] = await apiClient.get(`search/result?q=${keyword}`);
   return posts
 } 
 

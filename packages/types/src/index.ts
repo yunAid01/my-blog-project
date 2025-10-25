@@ -5,4 +5,5 @@ export * from './auth';
 export * from './post';
 export * from './user';
 export * from './comment';
+export * from './dm';
 // ... 다른 타입 파일들

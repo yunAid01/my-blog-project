@@ -12,6 +12,7 @@ import {
   LogIn, // 로그인 아이콘 추가
   LogOut, // 로그아웃 아이콘 추가
   User, // 프로필 아이콘 추가
+  MessageCircle
 } from 'lucide-react';
 
 export default function SideNav() {
@@ -32,6 +33,7 @@ export default function SideNav() {
     { href: '/', icon: <Home />, text: '홈' },
     { href: '/search', icon: <Search />, text: '검색' },
     { href: '/posts/create', icon: <PlusSquare />, text: '만들기' },
+    { href: '/dm', icon: <MessageCircle />, text: 'DM'}
   ];
 
   return (
